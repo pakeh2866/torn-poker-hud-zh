@@ -1,0 +1,5 @@
+# 这些文件必须保持 LF，否则每次编辑后整个文件的 diff 会糊掉
+*.user.js text eol=lf
+*.html    text eol=lf
+*.md      text eol=lf
+LICENSE   text eol=lf

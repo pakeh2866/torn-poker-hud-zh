@@ -1,0 +1,8 @@
+# 仓库只发布这 4 个文件，其余都是汉化流程的中间产物
+/*
+!/torn-poker-hud-zh.user.js
+!/i18n-report.html
+!/LICENSE
+!/README.md
+!/.gitignore
+!/.gitattributes
