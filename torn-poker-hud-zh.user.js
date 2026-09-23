@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.12.4
+// @version      6.12.5
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -15273,7 +15273,7 @@
             TAG:             { color: '#55e87a', body: `桌上最危险的玩家。他们的范围紧且强——尊重他们的下注。当他们表现出抵抗时，弃掉边缘牌。没有明确读牌不要试图诈唬。如果他们在危险的牌面加注，相信他们。当他们不参与底池时捡走底池，没有强牌避免正面交锋。` },
             FISH:            { color: '#ff9944', body: `这是你的提款机。他们玩太多牌了，几乎不加注——只会跟注、跟注。有成型牌就无情地价值下注。别诈唬他们，别玩花哨的。有牌就下大注，没牌就过牌。他们会用底对和卡顺听牌一直支付你。` },
             CALLING_STATION: { color: '#5db8f5', body: `永远别诈唬他们。他们会用底对跟注到河牌——句号。你唯一的武器就是价值。有牌就下大注。别慢打或设陷阱。薄价值下注也有效——即使顶对弱踢脚也值得多条街下注。只需要在摊牌时拿出更好的牌就行。` },
-            ROCK:            { color: '#8899aa', body: `比nit还紧——他们几乎不玩牌。每圈从任何位置偷他们的盲注。当他们终于往底池里投筹码时，快跑。他们的范围就是AA/KK/AK，没别的了。除非你拿着坚果牌，否则别浪费一个筹码试图反打他们。` },
+            ROCK:            { color: '#8899aa', body: `比紧弱型还紧 —— 他们几乎不玩牌。每圈从任何位置偷他们的盲注。当他们终于往底池里投筹码时，快跑。他们的范围就是AA/KK/AK，没别的了。除非你拿着坚果牌，否则别浪费一个筹码试图反打他们。` },
             NIT:             { color: '#4de3c4', body: `从后位无情地偷他们的盲注——他们几乎什么都弃牌。当他们终于表现出抵抗时，立即撤退。他们的下注意味着非常强的牌。反复拿这些轻松的钱，别在他们"醒过来"时支付他们。` },
             TIGHT_PASSIVE:   { color: '#e0e8ea', body: `几乎每个翻牌都C-bet——他们经常过牌-弃牌。随意偷盲。当他们跟注或加注时，放慢节奏重新评估。他们极力避免对抗，所以他们的激进几乎总是真牌。持续捡走小底池，慢慢放干他们的血。` },
             LOOSE_PASSIVE:   { color: '#d97ff0', body: `无情地价值下注。他们会用中对、弱听牌、任何边缘牌跟注。别费心诈唬了——他们跟注太多，诈唬很难持续有效。打直接的ABC扑克，当你真有牌时，每条街都让他们付出代价。` },
@@ -15288,82 +15288,82 @@
         // "8%" alone doesn't tell you if that's unusual, "8%, below the 14.9% pool
         // average" does. See POOL_AVG above.
         const vsPool = (avg, dir = 'above') => {
-            const label = dir === 'above' ? 'above' : 'below';
-            return `${label} the Torn-wide average of ${pct(avg)}`;
+            const label = dir === 'above' ? '高于' : '低于';
+            return `${label} Torn 全服均值 ${pct(avg)}`;
         };
 
         const exploits = [];
         if (m.foldVsFlopBet != null) {
             if (m.foldVsFlopBet >= 0.65)
-                exploits.push(`<b>C-bet every flop</b> — they fold to flop bets ${pct(m.foldVsFlopBet)} of the time, well ${vsPool(POOL_AVG.foldVsFlopCbet, 'above')}. You don't need to connect with the board.`);
+                exploits.push(`<b>每个翻牌都 C-bet</b> —— 他们面对翻牌下注有 ${pct(m.foldVsFlopBet)} 会弃牌，明显${vsPool(POOL_AVG.foldVsFlopCbet, 'above')}。你不需要跟牌面有任何关系。`);
             else if (m.foldVsFlopBet <= 0.30)
-                exploits.push(`<b>Cut your bluffs on the flop</b> — they only fold ${pct(m.foldVsFlopBet)}, well ${vsPool(POOL_AVG.foldVsFlopCbet, 'below')}. Only bet when you have real equity behind it.`);
+                exploits.push(`<b>翻牌上少诈唬</b> —— 他们只弃 ${pct(m.foldVsFlopBet)}，明显${vsPool(POOL_AVG.foldVsFlopCbet, 'below')}。只有真的有赢率支撑时才下注。`);
         }
         if (dm?.foldToCbet != null) {
             if (dm.foldToCbet >= 0.70)
-                exploits.push(`<b>C-bet them specifically as the preflop raiser</b> — they fold to a continuation bet ${pct(dm.foldToCbet)} of the time, ${vsPool(POOL_AVG.foldVsFlopCbet, 'above')}. This is the cleanest "just fire" read in the tab.`);
+                exploits.push(`<b>作为翻前加注者专门 C-bet 他们</b> —— 他们面对持续下注有 ${pct(dm.foldToCbet)} 会弃牌，${vsPool(POOL_AVG.foldVsFlopCbet, 'above')}。这是这一页里最干脆的「直接开火」信号。`);
             else if (dm.foldToCbet <= 0.35)
-                exploits.push(`<b>Don't auto-c-bet them</b> — they defend a continuation bet specifically ${pct(1 - dm.foldToCbet)} of the time, ${vsPool(POOL_AVG.foldVsFlopCbet, 'below')}. Check back more with marginal hands instead of firing on autopilot.`);
+                exploits.push(`<b>别对他们无脑 C-bet</b> —— 他们面对持续下注的防守率是 ${pct(1 - dm.foldToCbet)}，${vsPool(POOL_AVG.foldVsFlopCbet, 'below')}。边缘牌多过牌，别自动驾驶式开火。`);
         }
         if (dm?.cbetFlop != null && (s.cbetFlopOpps || 0) >= 5) {
             if (dm.cbetFlop <= 0.25)
-                exploits.push(`<b>Bet into their checked-back flops</b> — as the preflop raiser they only continuation-bet ${pct(dm.cbetFlop)} of the time, well below the Torn average of ${pct(POOL_AVG.cbetFlop)}. A missed c-bet from them is a real "I whiffed" signal — take the pot away.`);
+                exploits.push(`<b>他们过牌后要下注</b> —— 作为翻前加注者，他们的持续下注率只有 ${pct(dm.cbetFlop)}，远低于 Torn 全服均值 ${pct(POOL_AVG.cbetFlop)}。他们漏掉 C-bet 就是明确的「我没中」信号 —— 把底池拿走。`);
             else if (dm.cbetFlop >= 0.65)
-                exploits.push(`<b>Their c-bet means less than most players'</b> — ${pct(dm.cbetFlop)} continuation-bet rate, well above the Torn average of ${pct(POOL_AVG.cbetFlop)}. Call or raise light with any piece of the board instead of folding to it automatically.`);
+                exploits.push(`<b>他们的 C-bet 没有别人那么可信</b> —— 持续下注率 ${pct(dm.cbetFlop)}，远高于 Torn 全服均值 ${pct(POOL_AVG.cbetFlop)}。只要沾到牌面就跟注或轻加注，别条件反射式弃牌。`);
         }
         if (m.limpPct != null && m.limpPct >= 0.25)
-            exploits.push(`<b>Isolate their limps</b> — they limp in ${pct(m.limpPct)} of the time. Raise it up in position to play heads-up with a range advantage against a weak entry.`);
+            exploits.push(`<b>隔离他们的溜入</b> —— 他们有 ${pct(m.limpPct)} 的时候是溜入。有位置时加注，和他们单挑，用范围优势去打一次弱开池。`);
         if (m.threeBetPct != null) {
             if (m.threeBetPct <= 0.03)
-                exploits.push(`<b>Open wide when they're in the blinds</b> — they almost never 3-bet (${pct(m.threeBetPct)}, right at the Torn average of ${pct(POOL_AVG.threeBet)}). Steal freely and don't respect their flat-calls.`);
+                exploits.push(`<b>他们在盲注位时放宽开池</b> —— 他们几乎从不 3-bet（${pct(m.threeBetPct)}，正好在 Torn 全服均值 ${pct(POOL_AVG.threeBet)} 上）。放心偷盲，不用把他们的平跟当回事。`);
             else if (m.threeBetPct >= 0.12)
-                exploits.push(`<b>Tighten your open range</b> when they're left to act — they 3-bet ${pct(m.threeBetPct)}, over 3x the Torn average of ${pct(POOL_AVG.threeBet)}. Don't open junk and get blown off it.`);
+                exploits.push(`<b>收紧开池范围</b> —— 他们后面还没行动时：他们的 3-bet 率是 ${pct(m.threeBetPct)}，超过 Torn 全服均值 ${pct(POOL_AVG.threeBet)} 的三倍。别开烂牌然后被打飞。`);
         }
         if (m.foldTo3BetPct != null) {
             if (m.foldTo3BetPct >= 0.70)
-                exploits.push(`<b>3-bet them light</b> — they fold to 3-bets ${pct(m.foldTo3BetPct)} of the time, ${vsPool(POOL_AVG.foldTo3Bet, 'above')}. Squeeze them off wide opens with almost anything.`);
+                exploits.push(`<b>用轻牌 3-bet 他们</b> —— 他们面对 3-bet 有 ${pct(m.foldTo3BetPct)} 会弃牌，${vsPool(POOL_AVG.foldTo3Bet, 'above')}。他们宽范围开池时，用几乎任何牌挤压逼退。`);
             else if (m.foldTo3BetPct <= 0.30)
-                exploits.push(`<b>Don't 3-bet without a real hand</b> — they call or re-raise 3-bets ${pct(1 - m.foldTo3BetPct)} of the time, already ${vsPool(POOL_AVG.foldTo3Bet, 'below')} for the whole pool. Light squeezes will get you in trouble.`);
+                exploits.push(`<b>没有真牌别 3-bet</b> —— 他们面对 3-bet 有 ${pct(1 - m.foldTo3BetPct)} 会跟注或反加，对整个池子来说已经${vsPool(POOL_AVG.foldTo3Bet, 'below')}了。轻挤压会把你带进坑里。`);
         }
         if (dm?.squeezePct != null && dm.squeezePct >= 0.05)
-            exploits.push(`<b>Take their squeezes seriously</b> — they re-raise a caller ${pct(dm.squeezePct)} of the time (Torn pool average is ${pct(POOL_AVG.squeeze)} — this is one of the rare players who actually does it). It's not a bluff for fold equity in this pool, it's value. Fold the marginal hands you'd normally continue with.`);
+            exploits.push(`<b>把他们的挤压当真</b> —— 他们面对跟注者有 ${pct(dm.squeezePct)} 会反加（Torn 全服均值 ${pct(POOL_AVG.squeeze)}，这是少数真会这么打的玩家）。在这个池子里那不是为了弃牌率而诈唬，是价值。平时你会继续跟的边缘牌，这里弃掉。`);
         if (dm?.crFlop != null && dm.crFlop >= 0.05)
-            exploits.push(`<b>Give their check-raises real credit</b> — they check-raise the flop ${pct(dm.crFlop)} of flops seen, versus a Torn-wide average of ${pct(POOL_AVG.checkRaiseFlop)} (near-extinct pool-wide). When they do it, they almost always have it.`);
+            exploits.push(`<b>他们的过牌-加注要认真对待</b> —— 他们看过的翻牌里有 ${pct(dm.crFlop)} 会过牌-加注，而 Torn 全服均值是 ${pct(POOL_AVG.checkRaiseFlop)}（全服范围内几乎绝迹）。他们这么打的时候，基本都是有货。`);
         if (dm?.donkFlop != null && dm.donkFlop >= 0.20)
-            exploits.push(`<b>Watch for donk-bets into your raise</b> — they bet into the preflop raiser ${pct(dm.donkFlop)} of the time after just calling preflop. Unusual line — usually a made hand protecting equity or a real draw, rarely a total bluff. Don't auto-raise through it.`);
+            exploits.push(`<b>小心他们往你的加注里领打</b> —— 翻前只是跟注之后，他们有 ${pct(dm.donkFlop)} 的时候会直接下注打翻前加注者。这条线很少见 —— 通常是成牌在保护赢率，或者真听牌，很少是纯诈唬。别条件反射式加注。`);
         if (m.wtsd >= 0.55)
-            exploits.push(`<b>Don't try to bluff them off hands post-flop</b> — they go to showdown ${pct(m.wtsd)} of flops they see. They're not folding.`);
+            exploits.push(`<b>翻后别想诈唬他们弃牌</b> —— 他们看过的翻牌里有 ${pct(m.wtsd)} 会走到摊牌。他们不会弃。`);
         if (s.wentToShowdownCount >= 3) {
             const weakRate = s.showdownWeak / s.wentToShowdownCount;
             if (weakRate > 0.5)
-                exploits.push(`<b>Bet thin value freely</b> — ${Math.round(weakRate * 100)}% of their showdowns were one pair or worse. They call down with trash.`);
+                exploits.push(`<b>薄价值放心下注</b> —— 他们摊牌的手里有 ${Math.round(weakRate * 100)}% 是一对或更差。他们会用垃圾牌一直跟。`);
         }
         if (s.recent.length >= 10) {
             const win = s.recent.slice(-10);
             const recentV = win.filter(h => h.vpip).length / win.length;
             const lifetimeV = s.vpipCount / s.handsObserved;
             if (recentV - lifetimeV > 0.20)
-                exploits.push(`<b>Playing looser than usual right now</b> — either tilting or on a rush. Tighten up and make them pay when you have it.`);
+                exploits.push(`<b>他现在比平时更松</b> —— 要么在情绪化，要么在顺风期。收紧一点，你有牌的时候让他付出代价。`);
             else if (lifetimeV - recentV > 0.20)
-                exploits.push(`<b>Playing much tighter than normal</b> — card-dead or nursing chips. Their rare bets are even more credible right now.`);
+                exploits.push(`<b>他现在比平时紧很多</b> —— 要么牌死，要么在护筹码。他偶尔的下注现在更可信。`);
         }
         if (m.gap != null && m.gap >= 0.20)
-            exploits.push(`<b>Heavy caller, rarely raises</b> — ${pct(m.gap)} gap between VPIP and PFR. Their range post-flop is full of weak speculative hands. Bet for value on safe boards.`);
+            exploits.push(`<b>跟注多、极少加注</b> —— VPIP 和 PFR 之间差 ${pct(m.gap)}。他翻后的范围里全是弱的投机牌。牌面安全就下注拿价值。`);
         if (dm?.avgRaisePct != null && s.raisePctSamples >= 3) {
             if (dm.avgRaisePct <= 2)
-                exploits.push(`<b>Probe-size raises (avg ${dm.avgRaisePct.toFixed(1)}% of stack)</b> — they're not committed. Float their raise and take the pot on the turn when they check.`);
+                exploits.push(`<b>试探性加注（均占筹码 ${dm.avgRaisePct.toFixed(1)}%）</b> —— 他们没打算投入。跟注他的加注，转牌他过牌时把底池拿走。`);
             else if (dm.avgRaisePct >= 8)
-                exploits.push(`<b>Large raise commitment (avg ${dm.avgRaisePct.toFixed(1)}% of stack)</b> — when they raise they have something real. 3-bet for value or fold. Don't float.`);
+                exploits.push(`<b>加注投入很重（均占筹码 ${dm.avgRaisePct.toFixed(1)}%）</b> —— 他加注的时候是真有牌。要么价值 3-bet，要么弃牌。别跟着试探。`);
         }
         if (dm?.avgCallPct != null && s.callPctSamples >= 3 && dm.avgCallPct >= 10)
-            exploits.push(`<b>Commits big on calls (avg ${dm.avgCallPct.toFixed(1)}% of stack)</b> — they won't fold after a big call. Forget bluffing — just charge them every street.`);
+            exploits.push(`<b>跟注时投入很重（均占筹码 ${dm.avgCallPct.toFixed(1)}%）</b> —— 大额跟注之后他不会弃。别想诈唬 —— 每条街都收他的钱。`);
         if (s.wentToShowdownCount >= 5 && m.wsd != null && m.wsd <= 0.40)
-            exploits.push(`<b>Loses showdowns often (${pct(m.wsd)})</b> — calls down with hands that can't beat much. Value bet every street you're ahead.`);
+            exploits.push(`<b>摊牌输得很频繁（${pct(m.wsd)}）</b> —— 他会用打不过什么的牌跟到底。你领先的时候每条街都下注拿价值。`);
         if (dm?.wwsf != null && s.sawFlopCount >= 5) {
             if (dm.wwsf <= 0.15)
-                exploits.push(`<b>They rarely win once a flop is seen</b> — ${pct(dm.wwsf)} WWSF, well below the Torn average of ${pct(POOL_AVG.wwsf)}. Contest pots against them; folding out to a WWSF this low is a leak on your part, not theirs.`);
+                exploits.push(`<b>他们看到翻牌后很少赢</b> —— WWSF 只有 ${pct(dm.wwsf)}，远低于 Torn 全服均值 ${pct(POOL_AVG.wwsf)}。多和他争底池；面对这么低的 WWSF 你还弃牌，是你的漏洞，不是他的。`);
             else if (dm.wwsf >= 0.35)
-                exploits.push(`<b>They win a lot once they see a flop</b> — ${pct(dm.wwsf)} WWSF, well above the Torn average of ${pct(POOL_AVG.wwsf)}. That's either genuine skill or a rush — don't assume every pot they take is a bluff.`);
+                exploits.push(`<b>他们看到翻牌后赢很多</b> —— WWSF ${pct(dm.wwsf)}，远高于 Torn 全服均值 ${pct(POOL_AVG.wwsf)}。这要么是真本事，要么是顺风期 —— 别把他每次拿下底池都当成诈唬。`);
         }
 
         // Position — the Torn pool barely widens by seat at all (16.1% EP PFR → 14.5% LP
@@ -15374,21 +15374,21 @@
             const epPfr = posEP.pfr / posEP.hands;
             const lpPfr = posLP.pfr / posLP.hands;
             if (lpPfr - epPfr >= 0.15)
-                exploits.push(`<b>Respect their late-position raises more than usual</b> — PFR jumps from ${pct(epPfr)} early to ${pct(lpPfr)} late. Most of this pool barely adjusts by seat at all (Torn-wide average moves only 16.1% → 14.5%), so this player is actually playing positionally aware poker. A late "steal" from them might not be one.`);
+                exploits.push(`<b>对他的后位加注比平时更尊重</b> —— PFR 从前位 ${pct(epPfr)} 跳到后位 ${pct(lpPfr)}。这个池子里大多数人几乎不按位置调整（Torn 全服均值只从 16.1% 动到 14.5%），所以他其实是真的有位置意识。他后位的「偷盲」可能不是偷。`);
             else if (epPfr - lpPfr >= 0.10)
-                exploits.push(`<b>Their position is backwards</b> — raises MORE from early position (${pct(epPfr)}) than late (${pct(lpPfr)}), the opposite of standard theory. Their early opens are looser than they look; their late-position raises are the ones to actually respect.`);
+                exploits.push(`<b>他的位置打反了</b> —— 前位加注（${pct(epPfr)}）比后位（${pct(lpPfr)}）还多，和标准理论正好相反。他的前位开池比看起来松；真正要尊重的是他后位的加注。`);
         }
 
         if (exploits.length > 0) {
             cards.push(hintCard('◆', '具体漏洞', `<ul class="tphud-hint-list">${exploits.map(e => `<li>${e}</li>`).join('')}</ul>`, '#f1c40f'));
         } else {
             const needed = [];
-            if ((s.threeBetOpportunities || 0) < 3)  needed.push('a few more 3-bet spots');
-            if ((s.facedFlopBetCount || 0) < 3)      needed.push('more flop bets faced');
-            if ((s.sawFlopCount || 0) < 10)          needed.push('more flops seen');
-            const needStr = needed.length ? ` Needs ${needed.slice(0, 2).join(' and ')} to unlock most of them.` : '';
+            if ((s.threeBetOpportunities || 0) < 3)  needed.push('再多几个 3-bet 机会');
+            if ((s.facedFlopBetCount || 0) < 3)      needed.push('再多面对几次翻牌下注');
+            if ((s.sawFlopCount || 0) < 10)          needed.push('再多看几次翻牌');
+            const needStr = needed.length ? ` 还需要${needed.slice(0, 2).join('和')}，才能解锁大部分。` : '';
             cards.push(hintCard('◆', '具体漏洞',
-                `No specific exploit cleared the bar yet — this player's rates so far are close to typical Torn averages, or the sample's too thin to say otherwise.${needStr}`,
+                `还没有哪条具体漏洞达到阈值 —— 这名玩家目前的数据接近 Torn 的典型均值，或者样本太薄还看不出来。${needStr}`,
                 '#7f7f7f'));
         }
 
@@ -15396,7 +15396,7 @@
         if (typeKey === 'MANIAC' || typeKey === 'LAG')
             dangers.push(`别因为他们烦人就情绪化跟注。每次糟糕的跟注都是在白送筹码。等一手真牌然后设陷阱。`);
         if (typeKey === 'LAG')
-            dangers.push(`They'll 3-bet light to retake the pot. Don't open weak hands when they're left to act — they will fight back.`);
+            dangers.push(`他们会用轻牌 3-bet 把底池拿回去。他们后面还没行动时别开弱牌 —— 他们会反击。`);
         if (m.threeBetPct != null && m.threeBetPct >= 0.10)
             dangers.push(`翻前3-bet率为${pct(m.threeBetPct)}——桌上最高的之一。当他们有位置或在盲注位时，收紧你的开池范围。`);
         if (m.wsd != null && m.wsd >= 0.65 && s.wentToShowdownCount >= 5)
@@ -15418,14 +15418,14 @@
         // had the best hand — see the History tab's "⚠ Won without the best hand" flag.
         const stackWinCount = (s.history || []).filter(e => e.actualBestHand).length;
         if (stackWinCount >= 1)
-            dangers.push(`At least ${stackWinCount} recent showdown win${stackWinCount > 1 ? 's' : ''} happened without them actually holding the best hand (bigger stack getting a side pot / uncalled bet back). Don't read every pot they've won as proof their hand was good — check the History tab for the flagged hands.`);
+            dangers.push(`最近至少有 ${stackWinCount} 次摊牌「赢」，他手里其实并不是最好的牌（筹码多的一方拿边池／拿回无人跟的下注）。别把他赢下的每个底池都当成他牌好的证据 —— 去「历史」页看被标记的那几手。`);
 
         // Gambled In — bet an earlier street with real air, then won once a later card
         // bailed them out. Distinct from the Bluff stat (which only counts hands that lost).
         if ((s.totalVerdicts || 0) >= 5) {
             const gambledRate = (s.gambledInCount || 0) / s.totalVerdicts;
             if (gambledRate >= 0.15)
-                dangers.push(`Gambles into hands with nothing ${Math.round(gambledRate * 100)}% of the time and gets there — their early-street aggression doesn't mean they had it, some of it is a draw or air that got bailed out later. Don't over-credit a flop/turn bet from them as proof of a made hand; wait for the river to judge this player.`);
+                dangers.push(`有 ${Math.round(gambledRate * 100)}% 的时候他拿着空气就往底池里赌，然后还真成了 —— 他前几条街的激进不代表他有牌，其中一部分是听牌或空气后来被救回来。别把他翻牌／转牌的下注高估成成牌的证据；要判断这个人，等河牌再说。`);
         }
 
         if (dangers.length > 0)
@@ -15463,7 +15463,7 @@
         const top5Html = top5.map(h => {
             const vpipPct = h.dealt > 0 ? Math.round(h.vpip / h.dealt * 100) : 0;
             const winPct  = h.dealt > 0 ? Math.round(h.won  / h.dealt * 100) : 0;
-            return `<b>${h._key}</b>: ${h.dealt} dealt, ${vpipPct}% VPIP, ${winPct}% win`;
+            return `<b>${h._key}</b>：发到 ${h.dealt} 次，VPIP ${vpipPct}%，赢率 ${winPct}%`;
         }).join('<br>');
 
         const worst = hands
@@ -15471,9 +15471,9 @@
             .sort((a, b) => (b.dealt - b.won) - (a.dealt - a.won))
             .slice(0, 3);
         const worstHtml = worst.length > 0
-            ? '<b>Costing you chips:</b><br>' + worst.map(h => {
+            ? '<b>正在吃掉你的筹码：</b><br>' + worst.map(h => {
                 const winPct = Math.round(h.won / h.dealt * 100);
-                return `<b>${h._key}</b>: ${h.dealt} dealt, ${winPct}% win — drop this.`;
+                return `<b>${h._key}</b>：发到 ${h.dealt} 次，赢率 ${winPct}% —— 这手该丢。`;
               }).join('<br>')
             : '';
 
@@ -15482,10 +15482,10 @@
             .sort((a, b) => (b.dealt - b.won) - (a.dealt - a.won))
             .slice(0, 3);
         const overPlayedHtml = overPlayed.length > 0
-            ? '<b>Over-played losers:</b><br>' + overPlayed.map(h => {
+            ? '<b>玩过头的老输家：</b><br>' + overPlayed.map(h => {
                 const vpipPct = Math.round(h.vpip / h.dealt * 100);
                 const winPct  = Math.round(h.won  / h.dealt * 100);
-                return `You play <b>${h._key}</b> almost every time (${vpipPct}% VPIP) but only win ${winPct}%.`;
+                return `你几乎每次都玩 <b>${h._key}</b>（VPIP ${vpipPct}%），但只赢 ${winPct}%。`;
               }).join('<br>')
             : '';
 
@@ -15494,18 +15494,18 @@
             .sort((a, b) => b.dealt - a.dealt)
             .slice(0, 3);
         const underPlayedHtml = underPlayed.length > 0
-            ? '<b>Under-played winners:</b><br>' + underPlayed.map(h => {
+            ? '<b>玩得太少的赢家：</b><br>' + underPlayed.map(h => {
                 const winPct  = Math.round(h.won  / h.dealt * 100);
-                const neverRaised = h.pfr === 0 ? ` 而且你从未加注过——当你领先时加注能建立更大的底池。` : '';
-                return `You fold <b>${h._key}</b> too often — when you do play it, you win ${winPct}%.${neverRaised}`;
+                const neverRaised = h.pfr === 0 ? `而且你从未加注过 —— 当你领先时加注能建立更大的底池。` : '';
+                return `你太常弃掉 <b>${h._key}</b> —— 真玩的时候，赢率是 ${winPct}%。${neverRaised}`;
               }).join('<br>')
             : '';
 
         const noLeaksNote = (!worst.length && !overPlayed.length && !underPlayed.length)
-            ? '<i>No obvious hand selection leaks detected.</i>' : '';
+            ? '<i>没有发现明显的起手牌选择漏洞。</i>' : '';
 
         const sections = [
-            `<b>Top 5 most played:</b><br>${top5Html}`,
+            `<b>最常玩的 5 手牌：</b><br>${top5Html}`,
             worstHtml,
             overPlayedHtml,
             underPlayedHtml,
@@ -15531,7 +15531,7 @@
                 .filter(e => e.selfFoldVerdict?.verdict === 'FOLDED_STRONG')
                 .slice(0, 3)
                 .map(e => e.selfFoldVerdict.handDesc);
-            const exStr = examples.length > 0 ? ` (${examples[0]}${examples.length > 1 ? ` and ${examples.length - 1} more` : ''})` : '';
+            const exStr = examples.length > 0 ? `（${examples[0]}${examples.length > 1 ? ` 等 ${examples.length} 手` : ''}）` : '';
             if (strongCount >= 2)
                 bullets.push(`弃掉了强牌 <b>${strongCount} 次</b>${exStr}。回顾一下当时的尺度是否真的该弃——${strongCount} 次已经成模式了。`);
             else
@@ -15569,11 +15569,11 @@
         if (facedTurn >= 5) {
             const rate = foldVsTurn / facedTurn;
             if (rate > 0.65)
-                bullets.push(`You fold to turn bets <b>${pct(rate)}</b> of the time (${foldVsTurn}/${facedTurn}). Opponents who notice this will barrel you off hands every turn. This is a clear leak.`);
+                bullets.push(`你面对转牌下注有 <b>${pct(rate)}</b> 会弃牌（${foldVsTurn}/${facedTurn}）。注意到这点的对手会每条转牌都把你轰走。这是明确的漏洞。`);
             else if (rate > 0.55)
-                bullets.push(`You fold to turn bets <b>${pct(rate)}</b> of the time — on the high side. Start calling more with top pair or strong draws.`);
+                bullets.push(`你面对转牌下注有 <b>${pct(rate)}</b> 会弃牌 —— 偏高。顶对或强听牌可以多跟一些。`);
             else if (rate < 0.25)
-                bullets.push(`You only fold <b>${pct(rate)}</b> to turn bets — you're a tough call-down. Make sure you're not bleeding chips calling with middle pair on scary boards.`);
+                bullets.push(`你面对转牌下注只弃 <b>${pct(rate)}</b> —— 别人很难把你轰走。留意别在吓人的牌面上用中对一直跟、白流筹码。`);
             else
                 bullets.push(`转牌弃牌率 <b>${pct(rate)}</b>——还算合理，没有明显漏洞。`);
         }
@@ -15581,13 +15581,13 @@
         if (facedRiver >= 5) {
             const rate = foldVsRiver / facedRiver;
             if (rate > 0.70)
-                bullets.push(`You fold to river bets <b>${pct(rate)}</b> of the time (${foldVsRiver}/${facedRiver}). Any decent player will bluff your river after you call the turn. Fix this.`);
+                bullets.push(`你面对河牌下注有 <b>${pct(rate)}</b> 会弃牌（${foldVsRiver}/${facedRiver}）。只要你跟了转牌，任何像样的对手都会在河牌诈唬你。这个得改。`);
             else if (rate > 0.60)
-                bullets.push(`You fold to river bets <b>${pct(rate)}</b> — getting towards exploitable territory.`);
+                bullets.push(`你面对河牌下注弃牌 <b>${pct(rate)}</b> —— 已经接近被针对的区间了。`);
             else if (rate < 0.25)
-                bullets.push(`You almost never fold the river (<b>${pct(rate)}</b>). Good if you have strong reads — expensive if you're just stubborn.`);
+                bullets.push(`你河牌几乎从不弃牌（<b>${pct(rate)}</b>）。有靠谱读牌是好事 —— 只是死磕的话会很贵。`);
             else
-                bullets.push(`河牌 fold rate is <b>${pct(rate)}</b> — balanced.`);
+                bullets.push(`河牌弃牌率 <b>${pct(rate)}</b> —— 比较平衡。`);
         }
 
         if (facedTurn >= 5 && facedRiver >= 5) {
@@ -15615,21 +15615,21 @@
         const bullets = [];
 
         if (EP.hands >= 8 && pct(EP.vpip, EP.hands) > 30)
-            bullets.push(`You're playing too many hands from early position (<b>${pct(EP.vpip, EP.hands)}%</b> VPIP). Tighten to premium pairs and strong broadways from UTG.`);
+            bullets.push(`你在前位玩的牌太多了（VPIP <b>${pct(EP.vpip, EP.hands)}%</b>）。前位收紧到大对子和强高张。`);
 
         if (LP.hands >= 8 && pct(LP.pfr, LP.hands) < 12)
-            bullets.push(`You're not stealing enough from late position (<b>${pct(LP.pfr, LP.hands)}%</b> PFR). When it folds to you on the button, raise wider — any ace, any pair, any two broadways.`);
+            bullets.push(`你在后位偷盲不够（PFR <b>${pct(LP.pfr, LP.hands)}%</b>）。轮到按钮位全弃到你时，放宽加注 —— 任何像样的带 A 牌、任何对子、任何两张高张。`);
 
         if (BB.hands >= 10 && pct(BB.vpip, BB.hands) > 55 && pct(BB.pfr, BB.hands) < 10)
-            bullets.push(`You over-defend your big blind by calling too much (<b>${pct(BB.vpip, BB.hands)}%</b> VPIP, <b>${pct(BB.pfr, BB.hands)}%</b> PFR). Either fold or raise — stop flatting everything.`);
+            bullets.push(`你在大盲防守过度、跟注太多（VPIP <b>${pct(BB.vpip, BB.hands)}%</b>，PFR <b>${pct(BB.pfr, BB.hands)}%</b>）。要么弃牌、要么加注 —— 别什么都平跟。`);
 
         if (LP.hands >= 8 && EP.hands >= 8) {
             const lpPfr = pct(LP.pfr, LP.hands);
             const epPfr = pct(EP.pfr, EP.hands);
             if (Math.abs(lpPfr - epPfr) <= 5 && lpPfr >= 10)
-                bullets.push(`You play the same way regardless of position (LP <b>${lpPfr}%</b> PFR, EP <b>${epPfr}%</b> PFR). Position is the single biggest edge in poker — start exploiting it.`);
+                bullets.push(`你不分位置都这么打（后位 PFR <b>${lpPfr}%</b>，前位 PFR <b>${epPfr}%</b>）。位置是扑克里最大的优势 —— 开始利用它。`);
             else if (lpPfr >= epPfr * 1.8 && lpPfr >= 15)
-                bullets.push(`Good position awareness — LP PFR <b>${lpPfr}%</b> vs EP PFR <b>${epPfr}%</b>. Keep adjusting by position.`);
+                bullets.push(`位置意识不错 —— 后位 PFR <b>${lpPfr}%</b> 对前位 PFR <b>${epPfr}%</b>。继续保持按位置调整。`);
         }
 
         if (!bullets.length) return '';
@@ -15649,23 +15649,23 @@
         const stealWins  = s.ucStealCount            || 0;
 
         if (totalBluffs === 0 && ucTotal >= 5)
-            notes.push(`You've won <b>${ucTotal}</b> uncontested pots but never with a bluff — opponents will learn your bets always mean something and stop paying you off. Mix in some air.`);
+            notes.push(`你拿下过 <b>${ucTotal}</b> 个无人跟的底池，但一次都不是诈唬 —— 对手会学到你的下注永远代表有牌，然后不再支付你。掺一些空气进去。`);
         else if (totalBluffs > 0 && ucTotal >= 5) {
             const bluffPct = Math.round(totalBluffs / ucTotal * 100);
             if (bluffPct > 50)
-                notes.push(`<b>${bluffPct}%</b> of your uncontested wins were bluffs or semi-bluffs (${totalBluffs}/${ucTotal}) — getting away with it for now, but tighten up if opponents start adjusting.`);
+                notes.push(`你无人跟的底池里有 <b>${bluffPct}%</b> 是诈唬或半诈唬（${totalBluffs}/${ucTotal}）—— 目前还没被抓，但对手一旦开始调整就收着点。`);
             else if (bluffPct >= 20 && bluffPct <= 40)
-                notes.push(`<b>${bluffPct}%</b> of uncontested wins were bluffs — solid balance between value and air.`);
+                notes.push(`无人跟的底池里有 <b>${bluffPct}%</b> 是诈唬 —— 价值和空气的平衡不错。`);
         }
 
         if (valueWins >= 2)
-            notes.push(`Opponents folded to your value bets <b>${valueWins}</b> times — you're not extracting max value. Try smaller sizing to get calls.`);
+            notes.push(`对手对你的价值下注弃牌 <b>${valueWins}</b> 次 —— 你没榨到最大价值。试试下小一点换跟注。`);
 
         if (cbetWins >= 3)
-            notes.push(`C-bets working — <b>${cbetWins}</b> uncontested c-bet wins. Keep firing.`);
+            notes.push(`C-bet 有效 —— <b>${cbetWins}</b> 次无人跟的 C-bet 拿下底池。继续开火。`);
 
         if (stealWins >= 3 && ucTotal >= 5)
-            notes.push(`Stolen preflop <b>${stealWins}</b> times — effective blind pressure.`);
+            notes.push(`翻前偷盲 <b>${stealWins}</b> 次 —— 盲注位压力有效。`);
 
         if (!notes.length) return '';
         return hintCard('⊘', '不战而胜', `<ul class="tphud-hint-list">${notes.map(n => `<li>${n}</li>`).join('')}</ul>`, '#f39c12');
@@ -15735,17 +15735,17 @@
                 .slice(0, 2)
                 .map(e => e.verdict.reason)
                 .filter(Boolean);
-            const exStr = examples.length ? ` Recent example: "${examples[0]}."` : '';
-            bullets.push(`Had a real-but-not-great hand run into something better <b>${overplayed} times</b> (${rate}% of graded hands).${exStr} When the price to continue jumps — a raise, not just a bet — that's the moment to re-check whether your hand beats what's left in the pot, not just whether it beat what was there a street ago.`);
+            const exStr = examples.length ? ` 最近一例：「${examples[0]}」` : '';
+            bullets.push(`有真牌但不够强的牌撞上更强的牌 <b>${overplayed} 次</b>（占已评分手牌的 ${rate}%）。${exStr} 当继续下去的代价突然变高 —— 是加注而不只是下注 —— 那一刻就该重新确认：你的牌打得过底池里还在的那些牌吗，而不只是打得过一条街之前的那些牌吗。`);
         }
 
         if (looseCalls >= 2) {
             const rate = Math.round(looseCalls / tv * 100);
-            bullets.push(`Graded as a loose call <b>${looseCalls} times</b> (${rate}% of graded hands) — calls that weren't justified by price or hand strength at the time.`);
+            bullets.push(`被判为过松跟注 <b>${looseCalls} 次</b>（占已评分手牌的 ${rate}%）—— 这些跟注按当时的赔率或牌力都不成立。`);
         }
 
         if (!bullets.length) return '';
-        return hintCard('⚠', 'Calling Off Too Light', `<ul class="tphud-hint-list">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`, '#e74c3c');
+        return hintCard('⚠', '跟注太松', `<ul class="tphud-hint-list">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`, '#e74c3c');
     }
 
     // Checks whether bet/raise sizing with a modest made hand (Pair/Two Pair) actually scales
@@ -15780,8 +15780,8 @@
         }
         if (dryOverbets < 2) return '';
 
-        const bullets = [`Bet pot-sized or bigger with just a <b>${dryExamples[0] || 'pair'}</b> on a board with no real draw (no flush or obvious straight threat) <b>${dryOverbets} time${dryOverbets > 1 ? 's' : ''}</b> this session${wetOverbets ? `, versus ${wetOverbets} on boards that actually had a draw live` : ''}. If the size doesn't move with the board texture, it isn't sized to deny anything — check whether you're betting the board or betting how you feel about the hand.`];
-        return hintCard('◐', 'Bet Sizing vs. Board Texture', `<ul class="tphud-hint-list">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`, '#e67e22');
+        const bullets = [`本局有 <b>${dryOverbets} 次</b>在完全没有听牌的牌面（没有同花、也没有明显的顺子威胁）上，只拿着 <b>${dryExamples[0] || '一对'}</b> 就下了一个底池或更大的注${wetOverbets ? `，而有真听牌的牌面上只有 ${wetOverbets} 次` : ''}。如果下注量不跟着牌面湿润度走，这个量就不是在拒绝什么 —— 想想你是在对着牌面下注，还是对着自己对这手牌的感觉下注。`];
+        return hintCard('◐', '下注量 vs 牌面湿润度', `<ul class="tphud-hint-list">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`, '#e67e22');
     }
 
     // Flags showdown losses with a flush that wasn't the nuts (no Ace of the flush suit in hand,
@@ -15808,10 +15808,10 @@
         if (!nonNut.length) return '';
 
         const pushed = nonNut.filter(e => (e.betAmts || []).length > 0);
-        const bullets = [`Lost <b>${nonNut.length}</b> hand${nonNut.length > 1 ? 's' : ''} this session holding a flush that wasn't the nuts — no Ace of the flush suit in hand, so no way to rule out a bigger one.`];
+        const bullets = [`本局有 <b>${nonNut.length}</b> 手拿着非坚果同花输掉 —— 手里没有同花色的 A，就没法排除别人有更大的同花。`];
         if (pushed.length)
-            bullets.push(`<b>${pushed.length}</b> of those you bet or raised into, not just called. A non-nut flush with no blocker only gets action from hands that already beat it — one bet for value is usually the right amount of greed, not a raising war.`);
-        return hintCard('♠', 'Non-Nut Flush Awareness', `<ul class="tphud-hint-list">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`, '#8e44ad');
+            bullets.push(`其中 <b>${pushed.length}</b> 次你不只是跟注，还下注或加注了。没有阻断牌的非坚果同花，只会有已经比你大的牌来跟 —— 打一条街价值通常是合适的贪心，而不是加注大战。`);
+        return hintCard('♠', '非坚果同花意识', `<ul class="tphud-hint-list">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`, '#8e44ad');
     }
 
     // Approximates session-chronological net P&L from history timestamps and flags big losses
@@ -15854,10 +15854,10 @@
         if (flagged < 2) return '';
 
         const bullets = [
-            `<b>${flagged}</b> of your biggest losses this session (15%+ of your stack committed in one hand) landed either while you were already down for the session (<b>${downCount}</b>) or right after a new session-high (<b>${peakCount}</b>).`,
-            `Both are exactly the moments a small correct win stops feeling like enough. This isn't proof any single one of those was wrong — but it's worth checking your own state before committing big on a hand that lands right after a swing, not just checking the cards.`
+            `本局你最大的几笔亏损（单手投入 15% 以上筹码）里，有 <b>${flagged}</b> 笔是发生在你本局已经处于亏损时（<b>${downCount}</b>），或者刚创下本局新高之后（<b>${peakCount}</b>）。`,
+            `这两种时刻，正是一次正确的小赢开始显得不够的时候。这不能证明其中任何一笔是错的 —— 但在一手紧跟在波动之后到来的牌上投入大筹码之前，值得先检查一下自己的状态，而不只是检查牌。`
         ];
-        return hintCard('◈', 'Result-Chasing Pattern', `<ul class="tphud-hint-list">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`, '#c0392b');
+        return hintCard('◈', '追结果模式', `<ul class="tphud-hint-list">${bullets.map(b => `<li>${b}</li>`).join('')}</ul>`, '#c0392b');
     }
 
     function buildSelfHintHtml(s, type, m) {
@@ -15908,23 +15908,23 @@
             if (worstHand) {
                 const [h, d] = worstHand;
                 const winPct = Math.round(d.won / d.dealt * 100);
-                note += ` Your most-played losing hand is <b>${h}</b> (${d.dealt} dealt, ${winPct}% win rate) — consider dropping it.`;
+                note += `你玩得最多、又最亏的是 <b>${h}</b>（发到 ${d.dealt} 次，赢率 ${winPct}%）—— 考虑丢掉它。`;
             }
             statNotes.push(note);
         } else if (vpipPct < 15)
-            statNotes.push(`Your <b>VPIP is ${vpipPct}%</b> — you're folding a lot. Something around <b>18–28%</b> gives you more spots to work with. Open more from the button and cutoff when action folds to you.`);
+            statNotes.push(`你的 <b>VPIP 是 ${vpipPct}%</b> —— 你弃牌太多了。<b>18–28%</b> 左右能让你有更多可打的局面。轮到按钮位、关煞位全弃到你时，多开池。`);
         else
-            statNotes.push(`Your <b>VPIP is ${vpipPct}%</b> — solid range. Keep it there.`);
+            statNotes.push(`你的 <b>VPIP 是 ${vpipPct}%</b> —— 范围很扎实，保持住。`);
 
         if (pfrPct < 8 && vpipPct > 15)
-            statNotes.push(`Your <b>PFR is only ${pfrPct}%</b> — you're entering pots but not raising. Limping and flat-calling gives opponents good odds and hands initiative to them. Aim for <b>14–22%</b>.`);
+            statNotes.push(`你的 <b>PFR 只有 ${pfrPct}%</b> —— 你在进池，但不在加注。溜入和平跟给了对手好赔率，还把主动权交出去。目标 <b>14–22%</b>。`);
         else if (pfrPct >= 14 && pfrPct <= 24)
-            statNotes.push(`Your <b>PFR is ${pfrPct}%</b> — good aggression preflop. You're taking initiative and defining your range.`);
+            statNotes.push(`你的 <b>PFR 是 ${pfrPct}%</b> —— 翻前激进度不错。你在拿主动权，也在划定自己的范围。`);
         else if (pfrPct > 30)
-            statNotes.push(`Your <b>PFR is ${pfrPct}%</b> — 翻前加注太多了。确保你选的牌扛得住 3-bet，也扛得住跟注后中了翻牌的对手。`);
+            statNotes.push(`你的 <b>PFR 是 ${pfrPct}%</b> —— 翻前加注太多了。确保你选的牌扛得住 3-bet，也扛得住跟注后中了翻牌的对手。`);
 
         if (gap > 20)
-            statNotes.push(`You have a <b>${gap}% gap between VPIP and PFR</b> — you call significantly more than you raise. Passive calling is a leak. Every hand you flat-call instead of raise, you're giving up edge.`);
+            statNotes.push(`你的 <b>VPIP 和 PFR 之间差了 ${gap}%</b> —— 跟注明显多于加注。被动跟注是个漏洞。每一次你平跟而不是加注，都在让出优势。`);
 
         if (dm && dm.afqReliable) {
             if (afqPct < 20)
@@ -15955,31 +15955,31 @@
             const sh = s.startingHands || {};
 
             if (vpipPct > 32) {
-                let bullet = `<b>Fold more preflop</b> — especially from early position. The earlier you act, the stronger your hand needs to be.`;
+                let bullet = `<b>翻前多弃牌</b> —— 尤其是前位。你行动越早，牌就需要越强。`;
                 const toBeDropped = Object.entries(sh)
                     .filter(([, d]) => d.dealt >= 3 && (d.won / d.dealt) < 0.30 && (d.vpip / d.dealt) > 0.60)
                     .sort(([, a], [, b]) => (b.dealt - b.won) - (a.dealt - a.won))
                     .slice(0, 2);
                 if (toBeDropped.length > 0)
-                    bullet += ` Start by dropping <b>${toBeDropped.map(([h]) => h).join('</b> and <b>')}</b> — you've played them repeatedly with poor results.`;
+                    bullet += `先从丢掉 <b>${toBeDropped.map(([h]) => h).join('</b> 和 <b>')}</b> 开始 —— 你反复玩它们，结果都不好。`;
                 upgrades.push(bullet);
             }
             if (vpipPct < 15)
-                upgrades.push(`<b>Open more from late position</b> — when action folds to you on the button or cutoff, raise with any decent ace, any pair, any two broadways. Stop folding to free chips.`);
+                upgrades.push(`<b>后位多开池</b> —— 轮到按钮位或关煞位全弃到你时，任何像样的带 A 牌、任何对子、任何两张高张都可以加注。别再对着白送的筹码弃牌。`);
             if (pfrPct < 12 && vpipPct > 12) {
-                let bullet = `<b>Raise instead of call preflop</b> — entering with a raise takes initiative, builds the pot when you're ahead, and makes your hand harder to play against.`;
+                let bullet = `<b>翻前加注代替跟注</b> —— 加注入池能拿到主动权、在你领先时把底池做大，也让你的牌更难被针对。`;
                 const neverRaised = Object.entries(sh)
                     .filter(([, d]) => d.dealt >= 3 && d.vpip >= 2 && d.pfr === 0)
                     .sort(([, a], [, b]) => b.dealt - a.dealt)
                     .slice(0, 2);
                 if (neverRaised.length > 0)
-                    bullet += ` You've played <b>${neverRaised.map(([h]) => h).join('</b> and <b>')}</b> multiple times but never raised — if a hand is worth playing, raise.`;
+                    bullet += `你玩过 <b>${neverRaised.map(([h]) => h).join('</b> 和 <b>')}</b> 好几次，但一次都没加注 —— 一手牌既然值得玩，就值得加注。`;
                 upgrades.push(bullet);
             }
             if (dm && dm.afqReliable && afqPct < 25)
                 upgrades.push(`<b>翻后用下注代替过牌来打你的强牌</b> — 干燥牌面的顶对、翻牌同花听牌、两对——都值得下注。被动打法每一局都在白白丢掉价值。`);
             if (gap > 18)
-                upgrades.push(`<b>Close the VPIP-PFR gap</b> — 在跟注之前，先问自己"我这里是不是该加注？" 答案是你应该适当多加注.`);
+                upgrades.push(`<b>缩小 VPIP-PFR 缺口</b> —— 跟注之前，先问自己「我这里是不是该加注？」多数情况下答案是「该」。`);
 
             if (upgrades.length > 0)
                 cards.push(hintCard('▲', `通往${resolvedType(TYPES.TAG).label}之路`, `<ul class="tphud-hint-list">${upgrades.map(u => `<li>${u}</li>`).join('')}</ul>`, TYPES.TAG.color));
@@ -15992,11 +15992,11 @@
                 .sort(([, a], [, b]) => b.dealt - a.dealt)
                 .slice(0, 2);
             if (drifting.length > 0)
-                sharpNotes.push(`Watch out — <b>${drifting.map(([h]) => h).join('</b>, <b>')}</b> ${drifting.length > 1 ? 'are' : 'is'} creeping into your range with poor results. That's how VPIP drift starts.`);
+                sharpNotes.push(`注意 —— <b>${drifting.map(([h]) => h).join('</b>、<b>')}</b> 正在悄悄溜进你的范围，结果还不好。VPIP 漂移就是这么开始的。`);
 
             const epPos = (s.positions || {}).EP || { hands: 0, vpip: 0 };
             if (epPos.hands >= 8 && (epPos.vpip / epPos.hands) > 0.25)
-                sharpNotes.push(`Your early position play is loosening — <b>${Math.round(epPos.vpip / epPos.hands * 100)}%</b> VPIP from EP. Tighten back up.`);
+                sharpNotes.push(`你的前位开始变松了 —— 前位 VPIP 已经到 <b>${Math.round(epPos.vpip / epPos.hands * 100)}%</b>。收回来。`);
 
             const facedTurn  = s.facedTurnBetCount  || 0;
             const facedRiver = s.facedRiverBetCount || 0;
@@ -16012,7 +16012,7 @@
         }
 
         const result = cards.filter(Boolean).join('');
-        return result || '<div class="tphud-dim" style="padding:10px 0">Still building your profile — play more hands to unlock all insights.</div>';
+        return result || '<div class="tphud-dim" style="padding:10px 0">还在建立你的画像 —— 多打几手牌来解锁全部解读。</div>';
     }
 
     function buildHintHtml(s, isSelf, activeClass) {
@@ -16021,11 +16021,11 @@
         if (n < 5)
             return `<div class="tphud-dim" style="padding:10px 0">${
                 isSelf
-                    ? `${n || 0}/5 hands tracked so far — keep playing to unlock your full improvement profile.`
-                    : 'Need at least 5 hands to generate hints.'
+                    ? `目前已追踪 ${n || 0}/5 手牌 —— 继续玩，解锁完整的改进画像。`
+                    : '至少需要 5 手牌才能生成解读。'
             }</div>`;
         if (!isSelf && !metrics)
-            return '<div class="tphud-dim" style="padding:10px 0">Need at least 5 hands to generate hints.</div>';
+            return '<div class="tphud-dim" style="padding:10px 0">至少需要 5 手牌才能生成解读。</div>';
         return isSelf
             ? buildSelfHintHtml(s, type, metrics)
             : buildOpponentHintHtml(s, type, metrics);
