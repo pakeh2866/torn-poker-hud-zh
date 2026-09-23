@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.12.7
+// @version      6.12.8
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -5599,29 +5599,29 @@
                 // AQo
                 return _voice(
                     facingRaise
-                        ? `Ace-Queen offsuit facing a raise — calling is reasonable. Avoid 3-bet/calling off large portions of your stack, as AK dominates you.`
-                        : `Ace-Queen. Raise from ${posLabel}. Solid hand. Post-flop: top pair with good kicker. Pitfall: don't stack off against tight players — AK beats you.`,
+                        ? `Ace-Queen 不同花面对加注——跟注是合理的。避免 3-bet 或把大部分筹码跟进去，AK 压制你。`
+                        : `Ace-Queen。从 ${posLabel} 加注。扎实的牌。翻后：顶对带好踢脚。陷阱：别对紧手把筹码打光——AK 赢你。`,
                     facingRaise
-                        ? `Ace-Queen offsuit facing a raise — calling is reasonable. Don't go 3-bet calling off your whole stack, AK has you dominated.`
-                        : `Ace-Queen. Raise from ${posLabel}. Solid hand — top pair with a good kicker is your bread. Pitfall: tight player comes over the top, think twice. AK eats this for breakfast.`
+                        ? `Ace-Queen 不同花面对加注——跟注是合理的，伙计。别拿 3-bet 把整个筹码都跟进去，AK 压制着你。`
+                        : `Ace-Queen。从 ${posLabel} 加注。扎实的牌——顶对带好踢脚就是你的饭碗。陷阱：紧手反加，你得想清楚。AK 拿这个当早饭。`
                 );
             }
             if (isBBFree) return _voice(
-                `Strong hand in the big blind. Raise it, don't let them see a cheap flop.`,
-                `Strong hand in the big blind. Raise it — don't let these bums see a cheap flop.`
+                `大盲位的强牌。加注，别让他们便宜看翻牌。`,
+                `大盲位的强牌，孩子。加注——别让这帮家伙便宜看翻牌。`
             );
             if (facingRaise) return _voice(
-                `Solid hand from ${posLabel}. Calling is fine, re-raising is fine if you have a read on the raiser.`,
-                `Solid hand from ${posLabel}. Call is fine, re-raise is fine ? you got enough to push back if you got a read on the raiser, kid.`
+                `${posLabel} 位置的扎实牌。跟注可以，对加注者有读牌的话再加注也可以。`,
+                `${posLabel} 位置的扎实牌，伙计。跟注可以，再加注也可以——对加注者有读牌的话，你有底气推回去。`
             );
             return limperCount > 0
                 ? _voice(
-                    `Strong hand. Raise to isolate — ${limperCount} limper${limperCount > 1 ? 's' : ''} in.`,
-                    `Strong hand, kid. Raise to isolate — ${limperCount} limper${limperCount > 1 ? 's' : ''} already in.`
+                    `强牌。加注孤立——已经进来了 ${limperCount} 个溜入者。`,
+                    `强牌，孩子。加注孤立——${limperCount} 个溜入者已经在了。`
                   )
                 : _voice(
-                    `Strong hand. Open raise from ${posLabel}.`,
-                    `Strong hand, kid. Open raise from ${posLabel} — don't limp this.`
+                    `强牌。从 ${posLabel} 开局加注。`,
+                    `强牌，孩子。从 ${posLabel} 开局加注——别溜入。`
                   );
         }
         if (strength === 'playable') {
@@ -5666,7 +5666,7 @@
                     : `在 ${posLabel} 位置的边缘牌。弃掉，继续下一手。`,
                 facingRaise
                     ? `边缘牌。面对加注弃牌，等更好的时机——杜克不会用垃圾牌对抗加注。`
-                    : `Marginal hand from ${posLabel}. Fold and find a better spot, pal.`
+                    : `${posLabel} 位置的边缘牌，伙计。弃掉，等更好的时机。`
             );
         }
         // strength === 'weak'
