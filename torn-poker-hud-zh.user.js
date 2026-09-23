@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.12.2
+// @version      6.12.3
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -7301,23 +7301,23 @@
         if (!data) {
             btn.textContent = '—';
             btn.classList.add('tphud-beat-bubble-empty');
-            btn.title = 'No active villains yet · click for read history';
+            btn.title = '暂无活跃对手 · 点击查看解读历史';
         } else if (fullData && data.aggregate != null) {
             btn.textContent = _fmtBeatPct(data.aggregate);
             btn.classList.add(_beatBubbleColorClass(data.aggregate));
             btn.title = _anyActiveVillainAllIn()
-                ? '⚠ Villain is all-in — this % is only their shown-hand history, not proof they can\'t have the nuts. Click for breakdown.'
-                : 'Chance ≥1 active villain has a hand beating you. Click for breakdown.';
+                ? '⚠ 对手已全下 — 这个百分比只基于他亮过的牌，不能证明他拿不到坚果。点击查看细则。'
+                : '至少一个活跃对手能赢你的概率。点击查看细则。';
         } else if (fullData) {
             btn.textContent = `~${_fmtBeatPct(data.vsRandomPct)}`;
             btn.classList.add('tphud-beat-bubble-empty');
-            btn.title = 'No villain has enough showdown samples yet — showing vs-random-hand baseline. Click for breakdown.';
+            btn.title = '还没有对手的摊牌样本够多 — 暂用「对随机牌」基准。点击查看细则。';
         } else {
             // Spectator mode — hero isn't in this hand. Still tracking villains for the next showdown.
             const count = data.perVillain.length;
             btn.textContent = '👁';
             btn.classList.add('tphud-beat-bubble-empty');
-            btn.title = `Spectating · tracking ${count} villain${count !== 1 ? 's' : ''} · click for read history`;
+            btn.title = `观战中 · 正在追踪 ${count} 名对手 · 点击查看解读历史`;
         }
 
         // Snapshot the per-villain read so we can grade it once the hand ends.
@@ -7415,10 +7415,10 @@
         const beatingCount = hasBoardData ? data.beatingClasses.length : 0;
         const histCount = _beatReadHistory.length;
         const tabs = [
-            { id: 'current', label: hasBoardData ? 'Current hand' : (isSpectating ? 'Spectating' : 'Current hand') },
-            { id: 'history', label: histCount ? `History (${histCount})` : 'History' },
+            { id: 'current', label: hasBoardData ? '当前手牌' : (isSpectating ? '观战中' : '当前手牌') },
+            { id: 'history', label: histCount ? `历史 (${histCount})` : '历史' },
         ];
-        if (hasBoardData && beatingCount) tabs.push({ id: 'beating', label: `Hands beating you (${beatingCount})` });
+        if (hasBoardData && beatingCount) tabs.push({ id: 'beating', label: `能赢你的牌 (${beatingCount})` });
 
         const tabBar = tabs.map(t =>
             `<button class="tphud-beat-tab tphud-tab ${t.id === activeTab ? 'tphud-tab-active' : ''}" data-tab="${t.id}">${t.label}</button>`
@@ -7439,8 +7439,8 @@
         if (!data) {
             return `<div class="tphud-beat-empty">
                 <div class="tphud-beat-empty-icon">👁</div>
-                <div class="tphud-beat-empty-title">No active villains</div>
-                <div class="tphud-beat-empty-sub">Once a hand starts and villains commit chips, this tab fills with their likely-hand reads.</div>
+                <div class="tphud-beat-empty-title">没有活跃对手</div>
+                <div class="tphud-beat-empty-sub">一旦开牌、对手投入筹码，这里就会填上他们可能牌型的解读。</div>
             </div>`;
         }
 
@@ -7454,44 +7454,44 @@
         };
         const TOP_N = 8;
         const renderLikelyChips = wcs => {
-            if (!wcs.length) return `<span class="tphud-dim" style="font-size:12px">no shown hands match this PF line yet</span>`;
+            if (!wcs.length) return `<span class="tphud-dim" style="font-size:12px">还没有摊牌记录符合这条翻前线</span>`;
             const top = wcs.slice(0, TOP_N);
             const totalTop = top.reduce((s, c) => s + c.weight, 0);
             return top.map(c => {
                 const share = totalTop > 0 ? Math.round(c.weight / totalTop * 100) : 0;
                 const cls = c.beats ? 'tphud-beat-chip tphud-beat-chip-bad' : 'tphud-beat-chip tphud-beat-chip-ok';
-                return `<span class="${cls}" title="${c.beats ? 'BEATS you' : 'does not beat you'} · weight ${fmtW(c.weight)}">${c.cls}<span class="tphud-beat-chip-pct">${share}%</span></span>`;
+                return `<span class="${cls}" title="${c.beats ? '能赢你' : '赢不了你'} · 权重 ${fmtW(c.weight)}">${c.cls}<span class="tphud-beat-chip-pct">${share}%</span></span>`;
             }).join('');
         };
 
         const allInWarning = _anyActiveVillainAllIn()
-            ? `<div class="tphud-beat-allin-warn">⚠ Villain is all-in — this read is only their <em>shown-hand</em> history. A hand class they've never shown before isn't ruled out, it's just unconfirmed. Check the board yourself before trusting a low number here.</div>`
+            ? `<div class="tphud-beat-allin-warn">⚠ 对手已全下 — 这份解读只基于他<em>已摊牌</em>的历史。他没亮过的牌型并未被排除，只是没被证实。这个数字偏低时，请自己核一遍牌面再决定是否相信。</div>`
             : '';
 
         let header = '';
         if (data.spectating) {
             header = `<div class="tphud-beat-spect">
                 <span class="tphud-beat-spect-icon">👁</span>
-                <span class="tphud-beat-spect-text">Spectating — you're not in this hand. Showing each active villain's likely range so the read history grades correctly when they show down.</span>
+                <span class="tphud-beat-spect-text">观战中 — 你不在这一手里。这里显示每个活跃对手的可能范围，好让他们摊牌时解读历史能被正确打分。</span>
             </div>`;
         } else if (data.aggregate != null) {
             header = `<div class="tphud-beat-agg">
                 <div class="tphud-beat-agg-num" style="color:${data.aggregate >= 0.6 ? '#e74c3c' : data.aggregate >= 0.3 ? '#e67e22' : '#27ae60'}">${_fmtBeatPct(data.aggregate)}</div>
-                <div class="tphud-beat-agg-lbl">chance someone has you beat right now</div>
+                <div class="tphud-beat-agg-lbl">当前有人能赢你的概率</div>
                 ${allInWarning}
-                <div class="tphud-beat-baseline">vs random hand: ${pct(data.vsRandomPct)} · ${data.totalBeatingCombos} of ${data.totalCombos} possible combos beat you</div>
+                <div class="tphud-beat-baseline">对随机牌：${pct(data.vsRandomPct)} · ${data.totalCombos} 种可能组合里有 ${data.totalBeatingCombos} 种能赢你</div>
             </div>`;
         } else {
             header = `<div class="tphud-beat-agg">
-                <div class="tphud-beat-agg-num" style="color:#888">no read</div>
-                <div class="tphud-beat-agg-lbl">not enough showdown data on active villains</div>
+                <div class="tphud-beat-agg-num" style="color:#888">无解读</div>
+                <div class="tphud-beat-agg-lbl">活跃对手的摊牌样本不足</div>
                 ${allInWarning}
-                <div class="tphud-beat-baseline">vs random hand: ${pct(data.vsRandomPct)} · ${data.totalBeatingCombos} of ${data.totalCombos} possible combos beat you</div>
+                <div class="tphud-beat-baseline">对随机牌：${pct(data.vsRandomPct)} · ${data.totalCombos} 种可能组合里有 ${data.totalBeatingCombos} 种能赢你</div>
             </div>`;
         }
 
         const renderLineBaseline = lb => lb
-            ? `<div class="tphud-beat-linebase tphud-dim" style="font-size:11px;margin-top:2px;">Default line: ${lb.pattern} (${Math.round(lb.pct * 100)}%, ${lb.count}/${lb.total})</div>`
+            ? `<div class="tphud-beat-linebase tphud-dim" style="font-size:11px;margin-top:2px;">默认线：${lb.pattern}（${Math.round(lb.pct * 100)}%，${lb.count}/${lb.total}）</div>`
             : '';
         const villainRows = data.perVillain.length
             ? data.perVillain.map(v => {
@@ -7502,36 +7502,36 @@
                 if (data.spectating) {
                     return `<div class="tphud-beat-vrow">
                         ${head}
-                        <div class="tphud-beat-vlikely-lbl">Likely hands consistent with their PF action:</div>
+                        <div class="tphud-beat-vlikely-lbl">符合他翻前动作的可能牌型：</div>
                         <div class="tphud-beat-vbeats">${renderLikelyChips(v.weightedClasses)}</div>
                     </div>`;
                 }
                 if (v.p == null) {
                     return `<div class="tphud-beat-vrow">
                         ${head}
-                        <div class="tphud-beat-vmid tphud-dim">No usable read — need ${data.minSample}+ shown hands consistent with this PF line.</div>
+                        <div class="tphud-beat-vmid tphud-dim">暂无可用解读 — 至少需要 ${data.minSample}+ 手符合这条翻前线的摊牌记录。</div>
                         ${v.weightedClasses.length ? `<div class="tphud-beat-vbeats">${renderLikelyChips(v.weightedClasses)}</div>` : ''}
                     </div>`;
                 }
                 const color = v.p >= 0.6 ? '#e74c3c' : v.p >= 0.3 ? '#e67e22' : '#27ae60';
                 const neverShown = v.beatSeen === 0
-                    ? `<div class="tphud-beat-vnote tphud-dim" style="font-size:11px;margin-top:2px">Never seen ${v.name} show a hand that beats you (${v.sample} shown hands checked) — low %, not zero. They can still have it.</div>`
+                    ? `<div class="tphud-beat-vnote tphud-dim" style="font-size:11px;margin-top:2px">从未见过 ${v.name} 亮出能赢你的牌（已查 ${v.sample} 手摊牌）— 概率低，但不是零。他仍可能拿着。</div>`
                     : '';
                 return `<div class="tphud-beat-vrow">
                     ${head}
                     <div class="tphud-beat-vmid">
                         <span class="tphud-beat-vp" style="color:${color}">${_fmtBeatPct(v.p)}</span>
-                        <span class="tphud-beat-vsub">chance they have you beat</span>
+                        <span class="tphud-beat-vsub">能赢你的概率</span>
                     </div>
                     ${neverShown}
-                    <div class="tphud-beat-vlikely-lbl">Most likely hands now:</div>
+                    <div class="tphud-beat-vlikely-lbl">当前最可能的牌型：</div>
                     <div class="tphud-beat-vbeats">${renderLikelyChips(v.weightedClasses)}</div>
                 </div>`;
               }).join('')
-            : `<div class="tphud-dim" style="padding:10px 0">No active villains.</div>`;
+            : `<div class="tphud-dim" style="padding:10px 0">没有活跃对手。</div>`;
 
         return `${header}
-            <div class="tphud-beat-sec">Per-villain read</div>
+            <div class="tphud-beat-sec">逐个对手解读</div>
             <div class="tphud-beat-vlist">${villainRows}</div>`;
     }
 
@@ -7539,16 +7539,16 @@
         if (!data || data.spectating) {
             return `<div class="tphud-beat-empty">
                 <div class="tphud-beat-empty-icon">·</div>
-                <div class="tphud-beat-empty-title">Only available when you're in the hand</div>
-                <div class="tphud-beat-empty-sub">This list shows which exact hand classes can beat your hole cards on the current board.</div>
+                <div class="tphud-beat-empty-title">只有你在这一手里时才可用</div>
+                <div class="tphud-beat-empty-sub">这份列表显示：在当前牌面上，哪些具体牌型能赢你的底牌。</div>
             </div>`;
         }
         if (!data.beatingClasses.length) {
-            return `<div class="tphud-beat-sec-good">You have the nuts — nothing on the deck beats you.</div>`;
+            return `<div class="tphud-beat-sec-good">你拿的是坚果牌 — 牌面上没有任何牌能赢你。</div>`;
         }
         const topBeating = data.beatingClasses.slice(0, 60).map(c => `<span class="tphud-beat-cls">${c.cls}<span class="tphud-beat-cnt">·${c.count}</span></span>`).join(' ');
         const more = data.beatingClasses.length > 60 ? `<span class="tphud-dim" style="margin-left:6px">+${data.beatingClasses.length - 60} more</span>` : '';
-        return `<div class="tphud-beat-note" style="margin-top:0">Every class that currently beats your hand on this board. The number after each = remaining combos that can still make it.</div>
+        return `<div class="tphud-beat-note" style="margin-top:0">当前牌面上所有能赢你的牌型。每项后面的数字 = 还能凑出该牌型的剩余组合数。</div>
                 <div class="tphud-beat-allcls">${topBeating}${more}</div>`;
     }
 
@@ -7557,8 +7557,8 @@
         if (!_beatReadHistory.length) {
             return `<div class="tphud-beat-empty">
                 <div class="tphud-beat-empty-icon">·</div>
-                <div class="tphud-beat-empty-title">No reads graded yet</div>
-                <div class="tphud-beat-empty-sub">Each time a villain shows their cards, we'll log whether their actual hand was in our "most likely" list. MISS is expected when villains have few showdowns logged — the script can only list classes it's seen before.</div>
+                <div class="tphud-beat-empty-title">还没有解读被打分</div>
+                <div class="tphud-beat-empty-sub">每次对手亮牌，我们都会记录他的实际牌型有没有出现在「最可能」列表里。对手摊牌样本少时出现「漏」属正常 — 脚本只能列出它见过的牌型。</div>
             </div>`;
         }
         const pct = v => `${(v * 100).toFixed(0)}%`;
@@ -7577,29 +7577,29 @@
             }
         });
         const summary = `<div class="tphud-beat-histsum">
-            <span class="tphud-beat-histsum-item" style="color:#2ecc71">HIT ${hits}</span>
-            ${partial   ? `<span class="tphud-beat-histsum-item" style="color:#e67e22">PARTIAL ${partial}</span>` : ''}
-            ${underread ? `<span class="tphud-beat-histsum-item" style="color:#e67e22">UNDERREAD ${underread}</span>` : ''}
-            <span class="tphud-beat-histsum-item" style="color:#e74c3c">MISS-NEW ${missNew}</span>
-            <span class="tphud-beat-histsum-item" style="color:#f1c40f">MISS-FILTERED ${missFiltered}</span>
-            <span class="tphud-beat-histsum-item tphud-dim">of ${total}</span>
+            <span class="tphud-beat-histsum-item" style="color:#2ecc71">命中 ${hits}</span>
+            ${partial   ? `<span class="tphud-beat-histsum-item" style="color:#e67e22">部分命中 ${partial}</span>` : ''}
+            ${underread ? `<span class="tphud-beat-histsum-item" style="color:#e67e22">低估 ${underread}</span>` : ''}
+            <span class="tphud-beat-histsum-item" style="color:#e74c3c">漏-新 ${missNew}</span>
+            <span class="tphud-beat-histsum-item" style="color:#f1c40f">漏-滤 ${missFiltered}</span>
+            <span class="tphud-beat-histsum-item tphud-dim">共 ${total}</span>
         </div>`;
 
         const rows = _beatReadHistory.slice(0, 20).map(h => {
             let badge, color, sub = '';
             if (h.inList) {
-                if (h.spectating)                                  { badge = 'HIT (spec)';   color = '#2ecc71'; }
-                else if (h.predictedBeats && h.actualBeats)        { badge = 'HIT (red)';    color = '#2ecc71'; }
-                else if (!h.predictedBeats && !h.actualBeats)      { badge = 'HIT (gray)';   color = '#2ecc71'; }
-                else if (h.predictedBeats && !h.actualBeats)       { badge = 'PARTIAL';      color = '#e67e22'; }
-                else if (!h.predictedBeats && h.actualBeats)       { badge = 'UNDERREAD';    color = '#e67e22'; }
-                else                                               { badge = 'IN LIST';      color = '#aaa';    }
+                if (h.spectating)                                  { badge = '命中 (观战)';   color = '#2ecc71'; }
+                else if (h.predictedBeats && h.actualBeats)        { badge = '命中 (红)';    color = '#2ecc71'; }
+                else if (!h.predictedBeats && !h.actualBeats)      { badge = '命中 (灰)';   color = '#2ecc71'; }
+                else if (h.predictedBeats && !h.actualBeats)       { badge = '部分命中';      color = '#e67e22'; }
+                else if (!h.predictedBeats && h.actualBeats)       { badge = '低估';    color = '#e67e22'; }
+                else                                               { badge = '在列表内';      color = '#aaa';    }
             } else if (h.missReason === 'filtered') {
-                badge = 'MISS-FILTERED'; color = '#f1c40f';
-                sub = `seen ${h.histSeen}× (${h.histPfr} as raiser), excluded by ${h.action === 'raised' ? 'raise filter' : 'no-raise filter'}`;
+                badge = '漏-滤'; color = '#f1c40f';
+                sub = `见过 ${h.histSeen} 次（其中 ${h.histPfr} 次是加注），被${h.action === 'raised' ? '加注筛选' : '非加注筛选'}排除`;
             } else {
-                badge = 'MISS-NEW'; color = '#e74c3c';
-                sub = `villain has ${h.villainUniqueClasses} unique classes shown total`;
+                badge = '漏-新'; color = '#e74c3c';
+                sub = `该对手累计摊牌的不同牌型共 ${h.villainUniqueClasses} 种`;
             }
             const rankNote = h.inList ? `#${h.rank} · ${pct(h.sharePct)}` : '';
             const aggNote  = h.ourAggregate != null ? `agg ${pct(h.ourAggregate)}` : '';
@@ -7617,10 +7617,10 @@
         return `${summary}
             <div class="tphud-beat-histlist">${rows}</div>
             <div class="tphud-beat-note">
-                <strong>HIT</strong> = we listed villain's actual class.
-                <strong>PARTIAL/UNDERREAD</strong> = listed but mispredicted beat-or-not.
-                <strong>MISS-NEW</strong> = villain has never shown this class — pure sample-size limit.
-                <strong>MISS-FILTERED</strong> = villain has shown this class before but our PF/sizing filter excluded it this hand. If this is common, the filter may be too aggressive.
+                <strong>命中</strong> = 对手的实际牌型就在我们列出的名单里。
+                <strong>部分命中 / 低估</strong> = 牌型列到了，但「是否赢你」判断错了。
+                <strong>漏-新</strong> = 对手从没亮过这个牌型 — 纯属样本量限制。
+                <strong>漏-滤</strong> = 对手亮过这个牌型，但被我们的翻前/尺度筛选排除在这一手之外。这种情况若常见，说明筛选条件可能太激进。
             </div>`;
     }
 
@@ -7633,7 +7633,7 @@
         modal.innerHTML = `
             <div class="tphud-help-box tphud-beat-box">
                 <div class="tphud-help-header">
-                    <span class="tphud-help-title">Range Reader</span>
+                    <span class="tphud-help-title">范围解读</span>
                     <button class="tphud-help-close">&times;</button>
                 </div>
                 <div class="tphud-help-content tphud-beat-content">
@@ -18638,25 +18638,25 @@
                         </select>
                     </div>
 
-                    <div class="tphud-help-sec">Range Reader</div>
+                    <div class="tphud-help-sec">范围解读</div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-beatBubble">Range Reader bubble</label>
+                        <label class="tphud-setting-label" for="tphud-s-beatBubble">范围解读气泡</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-beatBubble">
-                            <option value="true"  ${s.beatBubble !== false ? 'selected' : ''}>On — default</option>
-                            <option value="false" ${s.beatBubble === false  ? 'selected' : ''}>Off — hide the bubble entirely</option>
+                            <option value="true"  ${s.beatBubble !== false ? 'selected' : ''}>开 — 默认</option>
+                            <option value="false" ${s.beatBubble === false  ? 'selected' : ''}>关 — 完全隐藏气泡</option>
                         </select>
                     </div>
                     <div class="tphud-setting-note">浮动气泡，显示某个还在局中的对手拿到能赢你的牌的概率——基于他已被观察到的摊牌范围，并按他的翻前动作和尺度过滤。点气泡可打开完整的范围解读弹窗（当前手牌 · 历史 · 能赢你的牌）。完全不想让它出现在屏幕上，就关掉这一项。</div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-beatBubbleMinSample">Min showdowns to use a villain</label>
+                        <label class="tphud-setting-label" for="tphud-s-beatBubbleMinSample">判定对手所需最少摊牌次数</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-beatBubbleMinSample">
-                            <option value="3"  ${s.beatBubbleMinSample === 3  ? 'selected' : ''}>3 shown hands</option>
-                            <option value="4"  ${s.beatBubbleMinSample === 4  ? 'selected' : ''}>4 shown hands — default</option>
-                            <option value="6"  ${s.beatBubbleMinSample === 6  ? 'selected' : ''}>6 shown hands</option>
-                            <option value="10" ${s.beatBubbleMinSample === 10 ? 'selected' : ''}>10 shown hands (strict)</option>
+                            <option value="3"  ${s.beatBubbleMinSample === 3  ? 'selected' : ''}>3 手摊牌</option>
+                            <option value="4"  ${s.beatBubbleMinSample === 4  ? 'selected' : ''}>4 手摊牌 — 默认</option>
+                            <option value="6"  ${s.beatBubbleMinSample === 6  ? 'selected' : ''}>6 手摊牌</option>
+                            <option value="10" ${s.beatBubbleMinSample === 10 ? 'selected' : ''}>10 手摊牌（严格）</option>
                         </select>
                     </div>
-                    <div class="tphud-setting-note">A villain needs at least this many showdown hands consistent with their current preflop line before their probability counts toward the aggregate. Lower = more reads but noisier; higher = fewer but more reliable.</div>
+                    <div class="tphud-setting-note">对手至少要有这么多手符合当前翻前线的摊牌记录，他的概率才会计入总体估算。调低 = 解读更多但更嘈杂；调高 = 更少但更可靠。</div>
 
                     <div class="tphud-help-sec">Display Style</div>
                     <div class="tphud-setting-row">
