@@ -11,12 +11,12 @@
 ## 安装
 
 1. 先安装 [Tampermonkey](https://www.tampermonkey.net/)（油猴脚本管理器）
-2. 安装脚本，二选一：
+2. 点下面任一链接安装（Tampermonkey 会自动弹出安装框）：
 
-   - **直接点** → [`torn-poker-hud-zh.user.js`](https://raw.githubusercontent.com/pakeh2866/torn-poker-hud-zh/main/torn-poker-hud-zh.user.js)（Tampermonkey 会自动弹安装框）
-   - **中国大陆访问 raw 慢** → [jsDelivr 加速镜像](https://cdn.jsdelivr.net/gh/pakeh2866/torn-poker-hud-zh@main/torn-poker-hud-zh.user.js)
+   - **国内推荐** · jsDelivr 镜像（CDN 加速，下载快） → [`torn-poker-hud-zh.user.js`](https://cdn.jsdelivr.net/gh/pakeh2866/torn-poker-hud-zh@main/torn-poker-hud-zh.user.js)
+   - **直连 GitHub** → [`torn-poker-hud-zh.user.js`](https://raw.githubusercontent.com/pakeh2866/torn-poker-hud-zh/main/torn-poker-hud-zh.user.js)
 
-3. 安装后打开 Torn 的 Hold'em 页面即生效。
+3. 安装后打开 Torn 的 Hold'em 页面即生效。脚本内置 `@updateURL`，以后有新版本 Tampermonkey 会自动提示更新。
 
 ---
 
@@ -50,7 +50,9 @@
 
 ## 汉化进度与对照报告
 
-仓库里附带一份 **[完整对照报告](i18n-report.html)**（`i18n-report.html`），逐行列出每一处「英文原文 → 中文译文」：
+**在线查看** → <https://pakeh2866.github.io/torn-poker-hud-zh/i18n-report.html>
+
+仓库里也保留了源文件 [`i18n-report.html`](i18n-report.html)，逐行列出每一处「英文原文 → 中文译文」：
 
 - 已汉化对照 **2573** 处（长句 1460 / 短标签/术语 1111）
 - 涉及 136 个代码区块
