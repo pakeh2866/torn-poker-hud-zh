@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.12.3
+// @version      6.12.4
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -15900,7 +15900,7 @@
         // Card 2: Stats Breakdown
         const statNotes = [];
         if (vpipPct > 40) {
-            let note = `Your <b>VPIP is ${vpipPct}%</b> — 你进入太多底池了. 目标范围 <b>18–30%</b>. 开始弃掉弱同花连牌、J以下的不同花高张, and any hand you're "hoping works out".`;
+            let note = `你的 <b>VPIP 是 ${vpipPct}%</b> —— 进池太多了。目标 <b>18–30%</b>。开始弃掉弱的同花连牌、J 以下的不同花高张，以及那些你只是「盼着能成」的牌。`;
             const sh = s.startingHands || {};
             const worstHand = Object.entries(sh)
                 .filter(([, d]) => d.dealt >= 3 && (d.won / d.dealt) < 0.30 && (d.vpip / d.dealt) > 0.60)
