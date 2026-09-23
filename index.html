@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Torn Poker HUD 玩家画像与教练 · 中文汉化版</title>
+<style>
+:root{--bg:#f6f7f9;--fg:#1c1f23;--mut:#666d78;--card:#fff;--line:#e2e5ea;--accent:#2b6cb0}
+@media (prefers-color-scheme:dark){:root{--bg:#14171b;--fg:#e8eaed;--mut:#98a0ab;--card:#1c2026;--line:#2a2f36;--accent:#3f8fd6}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);padding:48px 20px;
+  font:16px/1.7 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  display:flex;justify-content:center}
+main{max-width:720px;width:100%}
+h1{font-size:25px;line-height:1.4;margin:0 0 8px;letter-spacing:.2px}
+h2{font-size:17px;margin:0 0 10px}
+.sub{color:var(--mut);margin:0 0 26px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:22px 24px;margin-bottom:16px}
+a{color:var(--accent)}
+a.btn{display:inline-block;margin:4px 10px 4px 0;padding:11px 20px;border-radius:8px;
+  text-decoration:none;font-weight:600;border:1px solid var(--line)}
+a.p{background:var(--accent);color:#fff;border-color:var(--accent)}
+a.s{color:var(--fg)}
+ul{padding-left:20px;color:var(--mut);margin:0}
+li{margin:5px 0}
+footer{color:var(--mut);font-size:13px;line-height:1.9;margin-top:26px}
+.card .sub{margin:14px 0 0;font-size:14px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Torn Poker HUD 玩家画像与教练 · 中文汉化版</h1>
+  <p class="sub">德扑对手自动分析与实战提示 —— VPIP、PFR、AFq、WTSD 等指标，每个座位挂徽章，附针对性剥削建议。</p>
+
+  <div class="card">
+    <a class="btn p" href="https://cdn.jsdelivr.net/gh/pakeh2866/torn-poker-hud-zh@main/torn-poker-hud-zh.user.js">安装脚本（国内镜像）</a>
+    <a class="btn s" href="https://raw.githubusercontent.com/pakeh2866/torn-poker-hud-zh/main/torn-poker-hud-zh.user.js">直连 GitHub</a>
+    <p class="sub">需要先装 <a href="https://www.tampermonkey.net/">Tampermonkey</a>。点链接后会自动弹出安装框。</p>
+  </div>
+
+  <div class="card">
+    <h2>汉化对照报告</h2>
+    <a class="btn s" href="i18n-report.html">打开报告 →</a>
+    <p class="sub">逐行列出每一处「英文原文 → 中文译文」，共 2573 处已汉化、1015 处待处理。</p>
+  </div>
+
+  <div class="card">
+    <h2>使用前必读</h2>
+    <ul>
+      <li><b>不要与原版同时启用</b> —— 两者共用同一套存储键，会互相覆盖统计。</li>
+      <li>从原版切换过来<b>不会丢数据</b>：手牌记录、对手备注、设置全部继承。</li>
+      <li>仅翻译文案，未增删任何功能、未收集任何数据。</li>
+    </ul>
+  </div>
+
+  <footer>
+    原脚本 <a href="https://greasyfork.org/scripts/569933">Torn Poker HUD - Player Profiler &amp; Coach</a>
+    © HopesG，MIT 许可 · 汉化 pakeh2866<br>
+    本项目与 Torn 官方及原脚本作者均无隶属关系。
+  </footer>
+</main>
+</body>
+</html>
