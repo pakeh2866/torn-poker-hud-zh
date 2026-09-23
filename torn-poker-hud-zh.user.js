@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.12.6
+// @version      6.12.7
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -18210,53 +18210,53 @@
 
     // Coach-specific odds & terms glossary — explains GTO math shown in coach messages
     function showCoachGlossaryModal() {
-        createModal({ id: 'tphud-coach-glossary-modal', title: 'Coach — Odds &amp; Terms', bodyHtml: `
-                    <div class="tphud-help-sec">Reading the Numbers</div>
+        createModal({ id: 'tphud-coach-glossary-modal', title: '教练 — 赔率与术语', bodyHtml: `
+                    <div class="tphud-help-sec">读懂这些数字</div>
                     <div class="tphud-help-grid">
-                        <span class="tphud-help-term">Win % (Equity)</span>
-                        <span class="tphud-help-def">Your estimated chance of winning this hand right now, based on your cards, the board, and what hands the opponent likely holds.<br><em>Example: "18.5% in a 3-way pot" — play this exact spot 100 times and you win roughly 18 of them. You're behind. Don't build a big pot.</em></span>
+                        <span class="tphud-help-term">胜率 %（Equity）</span>
+                        <span class="tphud-help-def">你当前这手牌的预计胜率——取决于你的底牌、公共牌，以及对手可能拿着的牌。<br><em>例：「3 人底池里的 18.5%」——把这个局面重演 100 次，你大约赢 18 次。你正处于落后。不要做大底池。</em></span>
 
                         <span class="tphud-help-term">Need X% to call</span>
-                        <span class="tphud-help-def">The minimum win % for a call to make money long-term. If your equity beats this number, calling is profitable. If it doesn't, folding saves chips over time.<br><em>Example: "Need 28% to call" — your hand wins 36% of the time → call is profitable. Your hand wins 20% → fold.</em></span>
+                        <span class="tphud-help-def">长期来看，跟注要能赚钱所需的最低胜率。你的胜率高于这个数，跟注就是盈利的；低于这个数，弃牌长期能省下筹码。<br><em>例：「跟注需要 28%」——你的牌有 36% 胜率 → 跟注盈利。只有 20% → 弃牌。</em></span>
 
-                        <span class="tphud-help-term">Pot odds</span>
-                        <span class="tphud-help-def">What the bet size costs you relative to the pot. A small bet into a big pot is a cheap call (low % needed). A big bet into a small pot is expensive (high % needed).<br><em>Example: Pot $100, opponent bets $25 — total pot becomes $125, you call $25 → need to win 25/125 = 20% to break even.</em></span>
+                        <span class="tphud-help-term">底池赔率</span>
+                        <span class="tphud-help-def">下注额相对底池，要你付出多少代价。小注进大池是便宜的跟注（所需胜率低）；大注进小池很贵（所需胜率高）。<br><em>例：底池 $100，对手下注 $25——总底池变成 $125，你花 $25 跟注 → 需要赢 25/125 = 20% 才能保本。</em></span>
 
-                        <span class="tphud-help-term">MDF (Minimum Defense Frequency)</span>
-                        <span class="tphud-help-def">The minimum share of your hands you need to continue (call or raise, not fold) against a bet, so your opponent can't print money by bluffing with any two cards. It's advice about your whole range, not a verdict on the one hand you're holding — the coach's fold/call read on your actual cards still comes first.<br><em>Example: Pot $100, opponent bets $50 — MDF ~67%. If you fold more than a third of your hands in this spot, bluffing becomes automatically profitable for them.</em></span>
+                        <span class="tphud-help-term">MDF（最低防守频率）</span>
+                        <span class="tphud-help-def">面对下注时，你的范围里至少要有多大比例继续（跟注或加注，而不是弃牌），才能让对手没法用任意两张牌诈唬就白赚钱。这是针对你整个范围的建议，不是对你这手牌的判决——教练对你实际底牌的弃/跟判断依然优先。<br><em>例：底池 $100，对手下注 $50——MDF 约 67%。如果你在这个局面弃掉超过三分之一的牌，他的诈唬就自动盈利了。</em></span>
 
                         <span class="tphud-help-term">SPR</span>
                         <span class="tphud-help-def">筹码底池比——你的有效筹码除以底池，用来判断你已经陷得多深。<br><em>SPR 低于 3 = 接近套池——就算只有一对，跟全下通常也划算。<br>SPR 3–8 = 中等深度——没有强牌别过度投入。<br>SPR 高于 8 = 深筹码——一对很少能赢下大池，谨慎点。</em></span>
 
-                        <span class="tphud-help-term">Range edge</span>
+                        <span class="tphud-help-term">范围优势</span>
                         <span class="tphud-help-def">谁的起手牌和当前牌面更契合。翻前加注者的范围更容易命中高张、干燥的牌面；跟注者的范围更容易命中低张、连张的牌面。<br><em>例：牌面 A-K-2 彩虹 → 加注者有范围优势（AK、AA、KK 都在他的范围里）。<br>牌面 6-7-8 双花 → 跟注者有范围优势（他用同花连牌和小对子平跟进来的）。</em></span>
                     </div>
 
-                    <div class="tphud-help-sec">Draw Equity</div>
+                    <div class="tphud-help-sec">听牌胜率</div>
                     <div class="tphud-help-grid">
                         <span class="tphud-help-term">~X% equity to river</span>
-                        <span class="tphud-help-def">Your chance of completing your draw by the river (two cards still to come on the flop).<br><em>Calculated as: outs × 4 on the flop, outs × 2 on the turn.</em></span>
+                        <span class="tphud-help-def">到河牌做成你这手听牌的概率（翻牌时还有两张牌没发）。<br><em>算法：翻牌时 出路 × 4，转牌时 出路 × 2。</em></span>
 
-                        <span class="tphud-help-term">Outs</span>
-                        <span class="tphud-help-def">Cards left in the deck that complete your hand.<br><em>Flush draw = 9 outs (~36% to hit by river).<br>Open-ended straight draw = 8 outs (~32%).<br>Gutshot straight draw = 4 outs (~16%).</em></span>
+                        <span class="tphud-help-term">出路</span>
+                        <span class="tphud-help-def">牌堆里还能补成你这手牌的牌。<br><em>同花听牌 = 9 个出路（到河牌约 36% 成牌）。<br>双头顺听牌 = 8 个出路（约 32%）。<br>卡顺听牌 = 4 个出路（约 16%）。</em></span>
 
                         <span class="tphud-help-term">Odds are there ✓</span>
-                        <span class="tphud-help-def">Your draw equity beats what you need to call — the call is mathematically profitable long-term.<br><em>Example: draw equity 36%, need 28% to call → call.</em></span>
+                        <span class="tphud-help-def">你的听牌胜率高于跟注所需——这个跟注长期在数学上是盈利的。<br><em>例：听牌胜率 36%，跟注需要 28% → 跟。</em></span>
 
                         <span class="tphud-help-term">Odds against you ✗</span>
-                        <span class="tphud-help-def">Your draw equity falls short of the required call % — calling loses money over time unless you have other reasons (fold equity, implied odds).<br><em>Example: draw equity 16%, need 33% to call → fold the gutshot.</em></span>
+                        <span class="tphud-help-def">你的听牌胜率达不到跟注所需的百分比——除非另有理由（弃牌权益、隐含赔率），否则长期跟注是亏钱的。<br><em>例：听牌胜率 16%，跟注需要 33% → 弃掉卡顺。</em></span>
                     </div>
 
                     <div class="tphud-help-sec">教练置信度</div>
                     <div class="tphud-help-grid">
-                        <span class="tphud-help-term">Thin read</span>
-                        <span class="tphud-help-def">Fewer than ~10 hands observed on this player. The coach will still advise but the reads are based on limited data — treat them as early signals, not firm conclusions.</span>
+                        <span class="tphud-help-term">单薄解读</span>
+                        <span class="tphud-help-def">观察到的这个玩家不足约 10 手。教练仍会给建议，但解读基于有限数据——当成早期信号，而不是确定结论。</span>
 
-                        <span class="tphud-help-term">Decent read</span>
-                        <span class="tphud-help-def">10–25 hands observed. Stats are becoming meaningful. Player type labels are reasonably reliable.</span>
+                        <span class="tphud-help-term">尚可解读</span>
+                        <span class="tphud-help-def">观察了 10–25 手。数据开始有意义，玩家类型标签基本可靠。</span>
 
-                        <span class="tphud-help-term">Solid read</span>
-                        <span class="tphud-help-def">25+ hands observed. Player type and exploit advice is based on a substantial sample — higher confidence.</span>
+                        <span class="tphud-help-term">扎实解读</span>
+                        <span class="tphud-help-def">观察了 25+ 手。玩家类型和针对建议基于足够的样本——置信度更高。</span>
                     </div>
         ` });
     }
@@ -18290,7 +18290,7 @@
                         <span class="tphud-help-term">CTN</span><span class="tphud-help-def">谨慎型——玩的牌很少，多数时候过牌或跟注，回避对抗。威胁等级低。</span>
                         <span class="tphud-help-term">PSV</span><span class="tphud-help-def">松弱型——玩很多牌，但很少下注或加注，跟着牌漂、只会跟注。</span>
                         <span class="tphud-help-term">MIX</span><span class="tphud-help-def">混合型——暂时看不出明显模式。少于 25 手时，意思是“样本还不够，看不出来”。</span>
-                        <span class="tphud-help-term">S/F, T/N, ...</span><span class="tphud-help-def">混合型——满 25 手之后，混合型玩家的徽章会标出他的数据介于哪几种风格之间，最接近的排前面。字母：<b>M</b> 疯子, <b>A</b> 激进型, <b>S</b> 紧凶型, <b>F</b> 鱼, <b>C</b> 跟注站, <b>R</b> 岩石, <b>N</b> 紧弱型, <b>T</b> 谨慎型, <b>P</b> Passive Gambler. 开启扑克术语后：<b>M</b> 疯子, <b>L</b> 松凶型, <b>T</b> 紧凶型, <b>F</b> 鱼, <b>CS</b> 跟注站, <b>R</b> 岩石, <b>N</b> 紧弱型, <b>TP</b> 紧弱型, <b>LP</b> 松弱型. 也可能出现 S/F/C 这种三风格混合。悬停徽章可看完整名称。</span>
+                        <span class="tphud-help-term">S/F, T/N, ...</span><span class="tphud-help-def">混合型——满 25 手之后，混合型玩家的徽章会标出他的数据介于哪几种风格之间，最接近的排前面。字母：<b>M</b> 疯子, <b>A</b> 激进型, <b>S</b> 紧凶型, <b>F</b> 鱼, <b>C</b> 跟注站, <b>R</b> 岩石, <b>N</b> 紧弱型, <b>T</b> 谨慎型, <b>P</b> 被动赌徒。 开启扑克术语后：<b>M</b> 疯子, <b>L</b> 松凶型, <b>T</b> 紧凶型, <b>F</b> 鱼, <b>CS</b> 跟注站, <b>R</b> 岩石, <b>N</b> 紧弱型, <b>TP</b> 紧弱型, <b>LP</b> 松弱型. 也可能出现 S/F/C 这种三风格混合。悬停徽章可看完整名称。</span>
                     </div>
 
                     <div class="tphud-help-sec">位置</div>
