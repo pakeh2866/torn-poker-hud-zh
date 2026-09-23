@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.12.5
+// @version      6.12.6
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -16329,7 +16329,7 @@
         // leaving an empty pane looking broken.
         const huNote = hudSettings.trackHeadsUpStats ? '' : `
             <div class="tphud-dim" style="font-size:10px;margin-top:8px">
-                Heads-up (1v1) hands aren't recorded — turn on "Heads-up tracking" in Settings if you want them here.
+                单挑（1v1）的手牌不会被记录 — 想在这里看到它们，请在设置里打开「单挑（1v1）数据」。
             </div>`;
 
         if (!shared.length) {
@@ -18418,100 +18418,100 @@
         modal.innerHTML = `
             <div class="tphud-help-box tphud-settings-box">
                 <div class="tphud-help-header">
-                    <span class="tphud-help-title">⚙ HUD Settings</span>
+                    <span class="tphud-help-title">⚙ HUD 设置</span>
                     <button class="tphud-help-close">&times;</button>
                 </div>
                 <div class="tphud-help-content tphud-settings-content">
 
-                    <div class="tphud-help-sec">Badge Display</div>
+                    <div class="tphud-help-sec">徽章显示</div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-badgeMode">Badge shows</label>
+                        <label class="tphud-setting-label" for="tphud-s-badgeMode">显示内容</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-badgeMode">
-                            <option value="session"  ${s.badgeMode === 'session'  ? 'selected' : ''}>Session (last N hands)</option>
-                            <option value="lifetime" ${s.badgeMode === 'lifetime' ? 'selected' : ''}>Lifetime</option>
+                            <option value="session"  ${s.badgeMode === 'session'  ? 'selected' : ''}>本次会话（最近 N 手）</option>
+                            <option value="lifetime" ${s.badgeMode === 'lifetime' ? 'selected' : ''}>累计</option>
                         </select>
                     </div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-sessionWindow">Session window</label>
+                        <label class="tphud-setting-label" for="tphud-s-sessionWindow">会话窗口</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-sessionWindow">
-                            <option value="15" ${s.sessionWindow === 15 ? 'selected' : ''}>15 hands</option>
-                            <option value="25" ${s.sessionWindow === 25 ? 'selected' : ''}>25 hands</option>
-                            <option value="30" ${s.sessionWindow === 30 ? 'selected' : ''}>30 hands</option>
-                            <option value="50" ${s.sessionWindow === 50 ? 'selected' : ''}>50 hands</option>
+                            <option value="15" ${s.sessionWindow === 15 ? 'selected' : ''}>15 手</option>
+                            <option value="25" ${s.sessionWindow === 25 ? 'selected' : ''}>25 手</option>
+                            <option value="30" ${s.sessionWindow === 30 ? 'selected' : ''}>30 手</option>
+                            <option value="50" ${s.sessionWindow === 50 ? 'selected' : ''}>50 手</option>
                         </select>
                     </div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-showAlert">Alert (!) on badge</label>
+                        <label class="tphud-setting-label" for="tphud-s-showAlert">徽章上的警示 (!)</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-showAlert">
-                            <option value="true"  ${s.showAlertOnBadge ? 'selected' : ''}>On</option>
-                            <option value="false" ${!s.showAlertOnBadge ? 'selected' : ''}>Off</option>
+                            <option value="true"  ${s.showAlertOnBadge ? 'selected' : ''}>开</option>
+                            <option value="false" ${!s.showAlertOnBadge ? 'selected' : ''}>关</option>
                         </select>
                     </div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-inlineStats">Inline stats on badge</label>
+                        <label class="tphud-setting-label" for="tphud-s-inlineStats">徽章内联数据</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-inlineStats">
-                            <option value="true"  ${s.showInlineBadgeStats !== false ? 'selected' : ''}>On — VPIP/PFR/AFq/3-bet (desktop)</option>
-                            <option value="false" ${s.showInlineBadgeStats === false ? 'selected' : ''}>Off</option>
+                            <option value="true"  ${s.showInlineBadgeStats !== false ? 'selected' : ''}>开 — VPIP/PFR/AFq/3-bet（桌面端）</option>
+                            <option value="false" ${s.showInlineBadgeStats === false ? 'selected' : ''}>关</option>
                         </select>
                     </div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-clickOutside">Close panel on outside click</label>
+                        <label class="tphud-setting-label" for="tphud-s-clickOutside">点击外部关闭面板</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-clickOutside">
-                            <option value="false" ${!s.clickOutsideClosePanel ? 'selected' : ''}>Off — close with ✕ only (default)</option>
-                            <option value="true"  ${s.clickOutsideClosePanel ? 'selected' : ''}>On — clicking outside closes it</option>
+                            <option value="false" ${!s.clickOutsideClosePanel ? 'selected' : ''}>关 — 只能用 ✕ 关闭（默认）</option>
+                            <option value="true"  ${s.clickOutsideClosePanel ? 'selected' : ''}>开 — 点击面板外部即关闭</option>
                         </select>
                     </div>
 
-                    <div class="tphud-help-sec">Tilt Detection</div>
+                    <div class="tphud-help-sec">上头检测</div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-tiltDelta">Sensitivity</label>
+                        <label class="tphud-setting-label" for="tphud-s-tiltDelta">灵敏度</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-tiltDelta">
-                            <option value="0.15" ${s.tiltDeltaThreshold === 0.15 ? 'selected' : ''}>高 (15% VPIP shift)</option>
-                            <option value="0.20" ${s.tiltDeltaThreshold === 0.20 ? 'selected' : ''}>中 (20%)</option>
-                            <option value="0.25" ${s.tiltDeltaThreshold === 0.25 ? 'selected' : ''}>Standard (25%) — default</option>
-                            <option value="0.30" ${s.tiltDeltaThreshold === 0.30 ? 'selected' : ''}>低 (30%)</option>
+                            <option value="0.15" ${s.tiltDeltaThreshold === 0.15 ? 'selected' : ''}>高（VPIP 变化 15%）</option>
+                            <option value="0.20" ${s.tiltDeltaThreshold === 0.20 ? 'selected' : ''}>中（20%）</option>
+                            <option value="0.25" ${s.tiltDeltaThreshold === 0.25 ? 'selected' : ''}>标准（25%）— 默认</option>
+                            <option value="0.30" ${s.tiltDeltaThreshold === 0.30 ? 'selected' : ''}>低（30%）</option>
                         </select>
                     </div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-tiltWindow">Detection window</label>
+                        <label class="tphud-setting-label" for="tphud-s-tiltWindow">检测窗口</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-tiltWindow">
-                            <option value="5"  ${s.tiltWindow === 5  ? 'selected' : ''}>5 hands (reactive)</option>
-                            <option value="8"  ${s.tiltWindow === 8  ? 'selected' : ''}>8 hands — default</option>
-                            <option value="12" ${s.tiltWindow === 12 ? 'selected' : ''}>12 hands</option>
-                            <option value="15" ${s.tiltWindow === 15 ? 'selected' : ''}>15 hands (stable)</option>
+                            <option value="5"  ${s.tiltWindow === 5  ? 'selected' : ''}>5 手（更灵敏）</option>
+                            <option value="8"  ${s.tiltWindow === 8  ? 'selected' : ''}>8 手 — 默认</option>
+                            <option value="12" ${s.tiltWindow === 12 ? 'selected' : ''}>12 手</option>
+                            <option value="15" ${s.tiltWindow === 15 ? 'selected' : ''}>15 手（更稳定）</option>
                         </select>
                     </div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-tiltBanner">Tilt banner</label>
+                        <label class="tphud-setting-label" for="tphud-s-tiltBanner">上头横幅</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-tiltBanner">
-                            <option value="true"  ${s.tiltBanner !== false ? 'selected' : ''}>On — default</option>
-                            <option value="false" ${s.tiltBanner === false ? 'selected' : ''}>Off</option>
+                            <option value="true"  ${s.tiltBanner !== false ? 'selected' : ''}>开 — 默认</option>
+                            <option value="false" ${s.tiltBanner === false ? 'selected' : ''}>关</option>
                         </select>
                     </div>
-                    <div class="tphud-setting-note">Floating banner when your play pattern shows tilt. Includes your session profit/loss so you know what's at stake.</div>
+                    <div class="tphud-setting-note">当你的打法出现上头迹象时弹出的浮动横幅。会带上你本次会话的盈亏，让你清楚正在拿什么去冒险。</div>
 
-                    <div class="tphud-help-sec">Classification</div>
+                    <div class="tphud-help-sec">玩家分类</div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-minHands">Min hands to classify</label>
+                        <label class="tphud-setting-label" for="tphud-s-minHands">开始分类所需最少手数</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-minHands">
-                            <option value="3"  ${s.minHandsToClassify === 3  ? 'selected' : ''}>3 hands (fast)</option>
-                            <option value="5"  ${s.minHandsToClassify === 5  ? 'selected' : ''}>5 hands — default</option>
-                            <option value="8"  ${s.minHandsToClassify === 8  ? 'selected' : ''}>8 hands</option>
-                            <option value="10" ${s.minHandsToClassify === 10 ? 'selected' : ''}>10 hands (strict)</option>
+                            <option value="3"  ${s.minHandsToClassify === 3  ? 'selected' : ''}>3 手（更快见结果）</option>
+                            <option value="5"  ${s.minHandsToClassify === 5  ? 'selected' : ''}>5 手 — 默认</option>
+                            <option value="8"  ${s.minHandsToClassify === 8  ? 'selected' : ''}>8 手</option>
+                            <option value="10" ${s.minHandsToClassify === 10 ? 'selected' : ''}>10 手（更严格）</option>
                         </select>
                     </div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-trackHU">Heads-up (1v1) stats</label>
+                        <label class="tphud-setting-label" for="tphud-s-trackHU">单挑（1v1）数据</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-trackHU">
-                            <option value="false" ${!s.trackHeadsUpStats ? 'selected' : ''}>Paused — default</option>
-                            <option value="true"  ${s.trackHeadsUpStats  ? 'selected' : ''}>Keep tracking</option>
+                            <option value="false" ${!s.trackHeadsUpStats ? 'selected' : ''}>暂停 — 默认</option>
+                            <option value="true"  ${s.trackHeadsUpStats  ? 'selected' : ''}>继续统计</option>
                         </select>
                     </div>
                     <div class="tphud-setting-note">单挑（1v1）时默认暂停，因为单挑对手的数据会混进他多人桌的数字里，把两边都带偏。如果你主要打单挑桌，就打开这一项——徽章、教练解读和 VPIP/PFR 会继续工作，而不是显示一个中性的 "HU" 标签。</div>
 
-                    <div class="tphud-help-sec">Panel</div>
+                    <div class="tphud-help-sec">面板</div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-defaultTab">Default tab</label>
+                        <label class="tphud-setting-label" for="tphud-s-defaultTab">默认标签页</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-defaultTab">
                             <option value="stats"   ${s.panelDefaultTab === 'stats'   ? 'selected' : ''}>Stats</option>
                             <option value="hints"   ${s.panelDefaultTab === 'hints'   ? 'selected' : ''}>Hints</option>
@@ -18522,28 +18522,28 @@
                         </select>
                     </div>
 
-                    <div class="tphud-help-sec">Mobile</div>
+                    <div class="tphud-help-sec">手机端</div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label" for="tphud-s-badgeTap">Badge tap (phone)</label>
+                        <label class="tphud-setting-label" for="tphud-s-badgeTap">徽章点击（手机）</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-badgeTap">
-                            <option value="single" ${s.badgeTapMode !== 'double' ? 'selected' : ''}>Single tap — open immediately</option>
-                            <option value="double" ${s.badgeTapMode === 'double' ? 'selected' : ''}>Double tap — reduces accidental opens</option>
+                            <option value="single" ${s.badgeTapMode !== 'double' ? 'selected' : ''}>单击 — 立即打开</option>
+                            <option value="double" ${s.badgeTapMode === 'double' ? 'selected' : ''}>双击 — 减少误触</option>
                         </select>
                     </div>
-                    <div class="tphud-setting-note">Double tap only applies on mobile. PC always uses single click.</div>
+                    <div class="tphud-setting-note">双击只在手机端生效；电脑端始终是单击。</div>
                     <div class="tphud-setting-row">
                         <label class="tphud-setting-label" for="tphud-s-coachAutoClose">教练面板（手机）</label>
                         <select class="tphud-setting-ctrl" id="tphud-s-coachAutoClose">
-                            <option value="true"  ${s.coachAutoCloseMobile !== false ? 'selected' : ''}>Auto-close on outside tap — default</option>
-                            <option value="false" ${s.coachAutoCloseMobile === false ? 'selected' : ''}>Stay open — minimize manually with &minus;</option>
+                            <option value="true"  ${s.coachAutoCloseMobile !== false ? 'selected' : ''}>点击外部自动关闭 — 默认</option>
+                            <option value="false" ${s.coachAutoCloseMobile === false ? 'selected' : ''}>保持展开 — 手动点 &minus; 收起</option>
                         </select>
                     </div>
                     <div class="tphud-setting-note">有人希望教练面板整局都摊开着，而不是每次点别处就缩成一个小气泡。关掉这一项，面板就会一直保持展开，直到你自己点 &minus; 收起。</div>
                     <div class="tphud-setting-row">
-                        <label class="tphud-setting-label">Panel positions</label>
-                        <button class="tphud-setting-ctrl" id="tphud-s-resetPos" type="button">Reset to default</button>
+                        <label class="tphud-setting-label">面板位置</label>
+                        <button class="tphud-setting-ctrl" id="tphud-s-resetPos" type="button">恢复默认位置</button>
                     </div>
-                    <div class="tphud-setting-note">Use this if the coach panel or launcher button ends up off-screen.</div>
+                    <div class="tphud-setting-note">如果教练面板或启动按钮跑到屏幕外了，就用它恢复。</div>
 
                     <div class="tphud-help-sec">轮到你行动的提醒</div>
                     <div class="tphud-setting-row">
