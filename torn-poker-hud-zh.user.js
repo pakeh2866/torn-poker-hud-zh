@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.13.0
+// @version      6.13.1
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -11016,17 +11016,17 @@
         const leaks = [];
 
         if (dm.foldVsFlopBet !== null && dm.foldVsFlopBet > 0.65)
-            leaks.push({ key: 'fold_flop', cost: 3, msg: `在翻牌圈弃牌太多了 (${Math.round(dm.foldVsFlopBet * 100)}%)` });
+            leaks.push({ key: 'fold_flop', cost: 3, msg: `在翻牌圈弃牌太多了（${Math.round(dm.foldVsFlopBet * 100)}%）` });
         if (dm.vpip > 0.50)
-            leaks.push({ key: 'vpip_high', cost: 3, msg: `玩太多牌 (${Math.round(dm.vpip * 100)}% VPIP, 目标: ~35%)` });
+            leaks.push({ key: 'vpip_high', cost: 3, msg: `玩太多牌（${Math.round(dm.vpip * 100)}% VPIP，目标：~35%）` });
         if (dm.gap > 0.25 && dm.vpip > 0.35)
-            leaks.push({ key: 'gap_high', cost: 2, msg: `call preflop raises too wide (${Math.round(dm.gap * 100)}% gap — raise or fold instead)` });
+            leaks.push({ key: 'gap_high', cost: 2, msg: `翻前跟注加注太宽（${Math.round(dm.gap * 100)}% gap——要么加注要么弃牌）` });
         if (dm.pfr > 0 && dm.pfr < 0.08 && dm.vpip > 0.20)
-            leaks.push({ key: 'limp', cost: 2, msg: `limp太多 (PFR ${Math.round(dm.pfr * 100)}% vs VPIP ${Math.round(dm.vpip * 100)}%) — 溜入等于示弱，还会断送你的主动权` });
+            leaks.push({ key: 'limp', cost: 2, msg: `溜入太多（PFR ${Math.round(dm.pfr * 100)}% vs VPIP ${Math.round(dm.vpip * 100)}%）——溜入等于示弱，还会断送你的主动权` });
         if (dm.afq < 0.15 && dm.vpip > 0.25)
-            leaks.push({ key: 'passive', cost: 2, msg: `进池了却很少下注或加注 (AFq ${Math.round(dm.afq * 100)}%) — 你是跟注站` });
+            leaks.push({ key: 'passive', cost: 2, msg: `进池了却很少下注或加注（AFq ${Math.round(dm.afq * 100)}%）——你是跟注站` });
         if (alerts.some(a => a.tag === 'tilt'))
-            leaks.push({ key: 'tilt', cost: 3, msg: `最近的打法变松了 — 可能上头了` });
+            leaks.push({ key: 'tilt', cost: 3, msg: `最近的打法变松了——可能上头了` });
 
         // No leaks found — check for table-level context worth surfacing
         if (!leaks.length) {
@@ -11050,30 +11050,30 @@
         if (leaks.length === 1) {
             const l = leaks[0];
             if (l.key === 'fold_flop')  return _voice(
-                `你 ${l.msg}。对手可以通过在任何翻牌诈唬来利用这一点。如果你有任何牌面连接，坚持住。`,
-                `你 ${l.msg}。这桌每个玩家都知道他们可以在任何翻牌诈唬而你会弃牌。如果你和牌面有任何关系，坚持住让他们证明给你看。`
+                `你${l.msg}。对手可以通过在任何翻牌诈唬来利用这一点。如果你有任何牌面连接，坚持住。`,
+                `你${l.msg}。这桌每个玩家都知道他们可以在任何翻牌诈唬而你会弃牌。如果你和牌面有任何关系，坚持住让他们证明给你看。`
             );
             if (l.key === 'vpip_high')  return _voice(
-                `你 ${l.msg}。更多的牌意味着更多你处于没位置且持有弱牌的局面。选择好你的时机。`,
-                `你 ${l.msg}。像个游客一样每手牌都玩意味着你总是没位置拿着垃圾。选好时机，否则继续输。`
+                `你${l.msg}。更多的牌意味着更多你处于没位置且持有弱牌的局面。选择好你的时机。`,
+                `你${l.msg}。像个游客一样每手牌都玩意味着你总是没位置拿着垃圾。选好时机，否则继续输。`
             );
             if (l.key === 'gap_high')   return _voice(
-                `你 ${l.msg}。当有人加注时，3-bet 或弃牌。宽范围平跟是最糟糕的选择。`,
-                `你 ${l.msg}。有人加注，你就 3-bet 或弃牌——宽范围平跟是两世界之糟，Duke 知道这点。`
+                `你${l.msg}。当有人加注时，3-bet 或弃牌。宽范围平跟是最糟糕的选择。`,
+                `你${l.msg}。有人加注，你就 3-bet 或弃牌——宽范围平跟是两世界之糟，Duke 知道这点。`
             );
             if (l.key === 'limp')       return _voice(
-                `你 ${l.msg}。翻牌前加注或弃牌——平跟是在资助盲注并建造对你处于劣势的底池。`,
-                `你 ${l.msg}。加注或弃牌——平跟是在给所有人的盲注买单，并建造你本来就落后的底池，小子。`
+                `你${l.msg}。翻牌前加注或弃牌——平跟是在资助盲注并建造对你处于劣势的底池。`,
+                `你${l.msg}。加注或弃牌——平跟是在给所有人的盲注买单，并建造你本来就落后的底池，小子。`
             );
             if (l.key === 'passive')    return _voice(
-                `你 ${l.msg}。主动出击——用成牌下注，用有胜率的听牌诈唬，别只是跟注和祈祷。`,
-                `你 ${l.msg}。主动出击——用成牌下注，推进你的听牌，别再像个傻子一样跟注和祈祷了。`
+                `你${l.msg}。主动出击——用成牌下注，用有胜率的听牌诈唬，别只是跟注和祈祷。`,
+                `你${l.msg}。主动出击——用成牌下注，推进你的听牌，别再像个傻子一样跟注和祈祷了。`
             );
             if (l.key === 'tilt')       return _voice(
                 `你的打法变得比基线更松了。你可能在上头。慢下来，收紧打法直到你恢复状态。`,
                 `你的打法相比基线变得又松又烂了。你上头了，伙计。他妈的慢下来收紧打法，直到你脑子清醒过来。`
             );
-            return _voice(`漏洞：你 ${l.msg}。`, `漏洞，小子：你 ${l.msg}。改掉它。`);
+            return _voice(`漏洞：你${l.msg}。`, `漏洞，小子：你${l.msg}。改掉它。`);
         }
 
         // Multiple leaks: show the worst two and their interaction
@@ -11098,14 +11098,14 @@
             );
         if (top.key === 'tilt')
             return _voice(
-                `检测到上头且 ${second.msg}。情绪化地打牌同时已经存在漏洞是个糟糕的组合。本局重点：收紧，弃掉边缘局面，重置状态。`,
-                `检测到上头且 ${second.msg}。明明已经有漏洞了还情绪化打牌是破产的配方。本局重点：收紧，弃掉边缘局面，在干蠢事之前重置心态。`
+                `检测到上头且${second.msg}。情绪化地打牌同时已经存在漏洞是个糟糕的组合。本局重点：收紧，弃掉边缘局面，重置状态。`,
+                `检测到上头且${second.msg}。明明已经有漏洞了还情绪化打牌是破产的配方。本局重点：收紧，弃掉边缘局面，在干蠢事之前重置心态。`
             );
 
         // Generic multi-leak fallback
         return _voice(
-            `${leaks.length} 个漏洞活跃：${leaks.slice(0, 2).map(l => l.msg).join('，且你')}。本局重点：${leaks[0].key === 'vpip_high' || leaks[0].key === 'limp' ? '收紧翻牌前范围' : leaks[0].key === 'fold_flop' ? '翻牌后坚持持有手牌' : '先修复最大的漏洞'}.`,
-            `${leaks.length} 个漏洞在让你流血，小子：${leaks.slice(0, 2).map(l => l.msg).join('，且你')}。本局重点：${leaks[0].key === 'vpip_high' || leaks[0].key === 'limp' ? '在把整堆筹码送出去之前收紧翻牌前范围' : leaks[0].key === 'fold_flop' ? '翻牌后坚持持有手牌，别把底池拱手让人' : '先修复最大的漏洞——一次解决一个问题'}.`
+            `${leaks.length} 个漏洞活跃：${leaks.slice(0, 2).map(l => l.msg).join('，且你')}。本局重点：${leaks[0].key === 'vpip_high' || leaks[0].key === 'limp' ? '收紧翻牌前范围' : leaks[0].key === 'fold_flop' ? '翻牌后坚持持有手牌' : '先修复最大的漏洞'}。`,
+            `${leaks.length} 个漏洞在让你流血，小子：${leaks.slice(0, 2).map(l => l.msg).join('，且你')}。本局重点：${leaks[0].key === 'vpip_high' || leaks[0].key === 'limp' ? '在把整堆筹码送出去之前收紧翻牌前范围' : leaks[0].key === 'fold_flop' ? '翻牌后坚持持有手牌，别把底池拱手让人' : '先修复最大的漏洞——一次解决一个问题'}。`
         );
     }
 
