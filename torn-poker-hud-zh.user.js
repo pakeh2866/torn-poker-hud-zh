@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.12.8
+// @version      6.12.9
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -4322,8 +4322,8 @@
             const { typeKey: ot, name: on } = opponentCtx;
             if (ot === 'NIT' || ot === 'ROCK')
                 return _voice(
-                    `注意：${on} 是个 NIT——他们的加注范围极窄（顶对、三条、两对起步）。即使不错的牌也可能被碾压。`,
-                    `注意：${on} 是个 NIT——范围跟刀片一样薄，孩子。顶对、三条、两对起步。就算不错的牌也会被生吞。`
+                    `注意：${on} 是个紧弱型——他们的加注范围极窄（顶对、三条、两对起步）。即使不错的牌也可能被碾压。`,
+                    `注意：${on} 是个紧弱型——范围跟刀片一样薄，孩子。顶对、三条、两对起步。就算不错的牌也会被生吞。`
                 );
             if (ot === 'MANIAC' || ot === 'LAG')
                 return _voice(
@@ -4338,7 +4338,7 @@
             if (ot === 'TAG')
                 return _voice(
                     `注意：${on} 是个敏锐玩家——他们选时机，所以这个加注是真的，但不一定是个怪兽。`,
-                    `注意：${on} 很敏锐——他们选时机。这个加注是真的，但也不总是冷冰冰的 nuts。`
+                    `注意：${on} 很敏锐——他们选时机。这个加注是真的，但也不总是冷冰冰的坚果。`
                 );
             if (ot === 'TIGHT_PASSIVE')
                 return _voice(
@@ -4551,7 +4551,7 @@
             _setVerdict('value');
             if (isRoyalFlush) return _voice(
                 `皇家同花顺。扑克中最好的牌——你不可能输。慢打或领打，怎么榨取最多就怎么来。${posNoteNeutral}`,
-                `皇家同花顺，孩子。冷冰冰的 nuts——没有任何一手牌能打败你。慢打或直接干他们。这桌上的每一枚筹码都已经是你了。${posNoteNeutral}`
+                `皇家同花顺，孩子。冷冰冰的坚果——没有任何一手牌能打败你。慢打或直接干他们。这桌上的每一枚筹码都已经是你了。${posNoteNeutral}`
             );
             return isRiver
                 ? _voice(
@@ -4595,10 +4595,10 @@
                     );
             }
             const vulnNote = straightIsVulnerable && straightDangerRank
-                ? ` Anyone holding a ${straightDangerRank} makes a higher straight.`
+                ? ` 任何人拿着 ${straightDangerRank} 都能组成更大的顺子。`
                 : '';
             const vulnNoteDuke = straightIsVulnerable && straightDangerRank
-                ? ` Anyone sittin on a ${straightDangerRank} has got you beat with a higher straight.`
+                ? ` 谁手里攥着 ${straightDangerRank}，一手更大的顺子就把你压死了。`
                 : '';
             // Flush draw threat: 3 suited board cards means live flush draws that beat the straight
             const straightFlushDrawWarning = texture.isFlushy
@@ -4704,19 +4704,19 @@
                         `葫芦——三条加那个牌面对子，你坐在葫芦上呢。极其强。把价值搞进来，小子。${posNoteNeutral}`
                     );
             }
-            const handName = madeSet ? 'Set' : madeTrips ? 'Trips' : 'Two pair';
+            const handName = madeSet ? '暗三条' : madeTrips ? '三条' : '两对';
             // Pair of 8s + board's KK: the board pair is entirely shared — hero's real advantage is just one pair
             if (madeSecondPairPlusBoardPair && boardPairedRank) {
                 const heroPairRank = uniqueHoleHits[0];
                 const boardPairIsHigher = (RANK_VALUES[boardPairedRank] || 0) > (RANK_VALUES[heroPairRank] || 0);
                 const tripsNote = boardPairIsHigher
-                    ? `Anyone with a ${boardPairedRank} has trips — they beat your two pair. `
-                    : `Anyone with a ${heroPairRank} has trips — they beat your two pair. `;
+                    ? `任何人拿着 ${boardPairedRank} 就有三条——他们赢你的两对。 `
+                    : `任何人拿着 ${heroPairRank} 就有三条——他们赢你的两对。 `;
                 const tripsNoteDuke = boardPairIsHigher
-                    ? `Anyone holding a ${boardPairedRank} has trips on you — they got you beat. `
-                    : `Anyone holding a ${heroPairRank} has trips on you — they got you beat. `;
-                const sizing = facingAction !== 'bet' ? ' Bet small (25–33% pot) or check.' : '';
-                const sizingDuke = facingAction !== 'bet' ? ' Small bet or check.' : '';
+                    ? `谁拿着 ${boardPairedRank} 就有三条压着你——你被压死了。 `
+                    : `谁拿着 ${heroPairRank} 就有三条压着你——你被压死了。 `;
+                const sizing = facingAction !== 'bet' ? ' 小注（25–33% 底池）或过牌。' : '';
+                const sizingDuke = facingAction !== 'bet' ? ' 小注或过牌。' : '';
                 _setVerdict('marginal');
                 return _voice(
                     `两对——但牌面上的 ${boardPairedRank}s 是公共的，每个人都有。你实际的牌只是一对 ${heroPairRank}s。${tripsNote}保持底池小——别过度投入。${sizing}${posNoteNeutral}`,
@@ -4741,11 +4741,11 @@
                     const isAggro = opponentCtx && (opponentCtx.typeKey === 'MANIAC' || opponentCtx.typeKey === 'LAG');
                     const isFish  = opponentCtx && (opponentCtx.typeKey === 'FISH' || opponentCtx.typeKey === 'CALLING_STATION');
                     const isNit   = opponentCtx && (opponentCtx.typeKey === 'NIT' || opponentCtx.typeKey === 'ROCK' || opponentCtx.typeKey === 'TIGHT_PASSIVE');
-                    const oppName = opponentCtx?.name || 'Opponent';
+                    const oppName = opponentCtx?.name || '对手';
                     const straightDanger = texture.straightConnected;
                     const flushDanger    = texture.isFlushy && !heroBlocksFlushStrongly;
-                    const boardLabel     = straightDanger && flushDanger ? 'straight and flush-completing board'
-                                        : straightDanger ? 'straight-completing board' : 'flush-completing board';
+                    const boardLabel     = straightDanger && flushDanger ? '顺子、同花都已成型的牌面'
+                                        : straightDanger ? '顺子已成型的牌面' : '同花已成型的牌面';
                     // NIT/ROCK/TIGHT_PASSIVE: almost never bluffing here — fold regardless of two pair strength
                     if (isNit) {
                         return _voice(
@@ -4809,30 +4809,30 @@
                 }
                 _setVerdict('value');
                 return _voice(
-                    `${handName} - 强成牌。价值下注。${sizingStrong}${posNoteNeutral}`,
+                    `${handName}——强成牌。价值下注。${sizingStrong}${posNoteNeutral}`,
                     `${handName}。你有一手强成牌。在牌面变难看之前榨取每一枚筹码——价值下注，小子。${sizingStrong}${posNoteNeutral}`
                 );
             }
             const wetWarnings = [];
-            if (twoPairCounterfeited) wetWarnings.push(`board has a pair of ${boardPairedRank}s that outranks your pairs — opponents with a ${boardPairedRank} have you beaten on two pair`);
+            if (twoPairCounterfeited) wetWarnings.push(`牌面上的一对 ${boardPairedRank} 压过你的一对——拿着 ${boardPairedRank} 的对手用两对就赢了你`);
             if (texture.isFlushy) wetWarnings.push(heroBlocksFlush
-                ? `${texture.flushCards} cards of the same suit on board${heroBlocksFlushStrongly ? ' — heavily blocked, you hold two' : ' — partially blocked, you hold one'}`
-                : `${texture.flushCards} cards of the same suit on board — flush draws are live`);
+                ? `${texture.flushCards} 张同花牌在牌面${heroBlocksFlushStrongly ? '——重度阻断，你手里有两张' : '——部分阻断，你手里有一张'}`
+                : `${texture.flushCards} 张同花牌在牌面——同花听牌仍然成立`);
             if (texture.straightConnected) wetWarnings.push(heroBlocksStraight
-                ? `${texture.maxConnected} connected cards — your ${straightBlockRanks} blocks ${straightBlockInfo.blocked} of ${straightBlockInfo.total} possible straights`
-                : `${texture.maxConnected} connected cards — straight draws possible`);
+                ? `${texture.maxConnected} 张连牌——你的 ${straightBlockRanks} 阻断了 ${straightBlockInfo.total} 种可能顺子里的 ${straightBlockInfo.blocked} 种`
+                : `${texture.maxConnected} 张连牌——顺子听牌有可能`);
             if (wetWarnings.length) {
-                const prefix = twoPairCounterfeited ? `${handName} — watch out` : `${handName} - strong hand but the board is wet`;
-                const prefixDuke = twoPairCounterfeited ? `${handName} — hold on` : `${handName} - strong hand but this board's got teeth`;
+                const prefix = twoPairCounterfeited ? `${handName}——小心` : `${handName}——强牌，但牌面很湿`;
+                const prefixDuke = twoPairCounterfeited ? `${handName}——稳住` : `${handName}——强牌，但这牌面咬人`;
                 _setVerdict(twoPairCounterfeited ? 'marginal' : 'value');
                 return _voice(
-                    `${prefix}（${wetWarnings.join('; ')}）。${twoPairCounterfeited ? '保持底池小。' : '下注让那些听牌付费——别减速。'}${posNoteNeutral}`,
-                    `${prefixDuke}（${wetWarnings.join('; ')}）。${twoPairCounterfeited ? '保持底池小，否则你在开支票却兑现不了。' : '下注让那些听牌付过路费——Duke 不会在强牌上减速。'}${posNoteNeutral}`
+                    `${prefix}（${wetWarnings.join('；')}）。${twoPairCounterfeited ? '保持底池小。' : '下注让那些听牌付费——别减速。'}${posNoteNeutral}`,
+                    `${prefixDuke}（${wetWarnings.join('；')}）。${twoPairCounterfeited ? '保持底池小，否则你在开支票却兑现不了。' : '下注让那些听牌付过路费——Duke 不会在强牌上减速。'}${posNoteNeutral}`
                 );
             }
             _setVerdict('value');
             return _voice(
-                `${handName} - 强成牌。价值下注并防范听牌。${sizingStrong}${posNoteNeutral}`,
+                `${handName}——强成牌。价值下注并防范听牌。${sizingStrong}${posNoteNeutral}`,
                 `${handName}。你中了暗三条。漂亮。在牌面变难看之前榨取每一枚筹码，小子。${sizingStrong}${posNoteNeutral}`
             );
         }
@@ -4844,11 +4844,11 @@
             const _overpairCrushed = !isNaN(_overpairEquity) && _overpairEquity < 28;
             if (_overpairCrushed) {
                 if (facingAction === 'bet') return _voice(
-                    `超对但 equity 非常低——这个牌面很可能已经反超你了。面对真正的压力就弃牌。${sprNote}${posNote}${oppStr}`,
-                    `超对但牌面已经打败你了，小子。Equity 说面对任何真正的压力就该弃牌。${sprNote}${posNote}${oppStr}`
+                    `超对但胜率非常低——这个牌面很可能已经反超你了。面对真正的压力就弃牌。${sprNote}${posNote}${oppStr}`,
+                    `超对但牌面已经打败你了，小子。胜率说面对任何真正的压力就该弃牌。${sprNote}${posNote}${oppStr}`
                 );
                 return _voice(
-                    `超对但 equity 非常低——牌面很危险。过牌并重新评估，然后再投入筹码。${sprNote}${posNote}${oppStr}`,
+                    `超对但胜率非常低——牌面很危险。过牌并重新评估，然后再投入筹码。${sprNote}${posNote}${oppStr}`,
                     `超对但牌面正在碾压你，伙计。过牌看看，三思之后再往里面扔筹码。${sprNote}${posNote}${oppStr}`
                 );
             }
@@ -4863,12 +4863,12 @@
             }
             const wetWarnings = [];
             if (texture.isFlushy) wetWarnings.push(heroBlocksFlush
-                ? `${texture.flushCards} flush-suit cards on board${heroBlocksFlushStrongly ? ' — heavily blocked, you hold two' : ' — partially blocked, you hold one'}`
+                ? `${texture.flushCards} 张同花牌在牌面${heroBlocksFlushStrongly ? '——重度阻断，你手里有两张' : '——部分阻断，你手里有一张'}`
                 : `${texture.flushCards} 张同花牌在牌面`);
             if (texture.straightConnected) wetWarnings.push(heroBlocksStraight
-                ? `${texture.maxConnected} connected cards — your ${straightBlockRanks} blocks ${straightBlockInfo.blocked} of ${straightBlockInfo.total} possible straights`
+                ? `${texture.maxConnected} 张连牌——你的 ${straightBlockRanks} 阻断了 ${straightBlockInfo.total} 种可能顺子里的 ${straightBlockInfo.blocked} 种`
                 : `${texture.maxConnected} 张连牌`);
-            if (boardHasPair && boardPairedRank) wetWarnings.push(`board has a pair of ${boardPairedRank}s — anyone holding a ${boardPairedRank} has trips on you`);
+            if (boardHasPair && boardPairedRank) wetWarnings.push(`牌面上有一对 ${boardPairedRank}——谁拿着 ${boardPairedRank} 就有三条压着你`);
             if (wetWarnings.length) {
                 // Shove on a paired board = strong fold signal even with AA/KK — one pair loses to trips/boats
                 if (isShove && boardHasPair && boardPairedRank) return _voice(
@@ -4879,7 +4879,7 @@
                     // Hero is the aggressor on a paired board — warn against overbetting or shoving with just one pair
                     const deepSprWarning = (spr != null && spr > 4)
                         ? _voice(
-                            ` Do NOT shove or overbet — probe with 25–40% pot to gauge their hand. If they call or raise, respect it and fold.`,
+                            ` 千万别全下、也别超池下注——小注试探 25–40% 底池，看看他们什么反应。他们跟注或加注，就认了并弃牌。`,
                             ` 别把你全部筹码往这送，孩子。试探下注 25–40% 底池，看看他们怎么反应。他们加注？你就弃牌。`
                         )
                         : _voice(
@@ -4887,16 +4887,16 @@
                             ` 小注摸摸底——他们推回来你就走人，伙计。`
                         );
                     return _voice(
-                        `超对，但牌面危险（${wetWarnings.join('; ')}）。${deepSprWarning}${sprNote}${posNote}${oppStr}`,
-                        `超对，但这牌面有牙（${wetWarnings.join('; ')}）。${deepSprWarning}${sprNote}${posNote}${oppStr}`
+                        `超对，但牌面危险（${wetWarnings.join('；')}）。${deepSprWarning}${sprNote}${posNote}${oppStr}`,
+                        `超对，但这牌面有牙（${wetWarnings.join('；')}）。${deepSprWarning}${sprNote}${posNote}${oppStr}`
                     );
                 }
-                const raiseNote = facingAction === 'bet' ? ' 面对下注在这里，重新评估——他们可能已经领先你了。' : ' 下注，但准备好面对强 resistance 时弃牌。';
+                const raiseNote = facingAction === 'bet' ? ' 面对下注在这里，重新评估——他们可能已经领先你了。' : ' 下注，但准备好面对强烈反击时弃牌。';
                 const raiseNoteDuke = facingAction === 'bet' ? ' 面对下注，伙计——再想想，他们可能已经领先了。' : ' 下注但要准备好，压力来了就走人。';
                 _setVerdict('marginal');
                 return _voice(
-                    `超对，但小心（${wetWarnings.join('; ')}）。${raiseNote}${sprNote}${posNote}${oppStr}`,
-                    `超对，但这牌面有牙（${wetWarnings.join('; ')}）。${raiseNoteDuke}${sprNote}${posNote}${oppStr}`
+                    `超对，但小心（${wetWarnings.join('；')}）。${raiseNote}${sprNote}${posNote}${oppStr}`,
+                    `超对，但这牌面有牙（${wetWarnings.join('；')}）。${raiseNoteDuke}${sprNote}${posNote}${oppStr}`
                 );
             }
             _setVerdict('value');
@@ -4924,8 +4924,8 @@
                 const _tpRiverEquity = parseFloat(_oddsCache?.win);
                 const _tpCrushed = !isNaN(_tpRiverEquity) && _tpRiverEquity < 28;
                 if (_tpCrushed) { _setVerdict('fold'); return _voice(
-                    `河牌顶对但 equity 很低——牌面可能已经反超你了。面对压力就弃牌。${posNote}`,
-                    `河牌顶对但牌面已经碾压你了，孩子。Equity 说面对任何真正压力就该弃牌。${posNote}`
+                    `河牌顶对但胜率很低——牌面可能已经反超你了。面对压力就弃牌。${posNote}`,
+                    `河牌顶对但牌面已经碾压你了，孩子。胜率说面对任何真正压力就该弃牌。${posNote}`
                 ); }
                 return _voice(
                     `河牌顶对。下注薄价值或跟注合理下注。${sizingThin}${posNote}`,
@@ -4942,25 +4942,25 @@
             );
             _setVerdict('fold');
             return _voice(
-                `You have not connected with the board. Fold to pressure - you have nothing to call with.`,
-                `You connected with nothing on this board. Get outta there. Duke don't throw good chips after bad.`
+                `你没有和牌面连接上。面对压力就弃牌——你没什么可跟的。`,
+                `你和这牌面毫无关系。赶紧走人。杜克可不会把好筹码往坏牌上扔。`
             );
         }
 
         // Flush draw + straight draw combo (not river): big draw, 12 outs (flush + gutshot) or 15 outs (flush + OESD)
         if (hasFlushDraw && hasStraightDraw) {
             const flushLabel    = hasNutFlushDraw ? '坚果同花听牌' : flushIsWeak ? '弱同花听牌' : '同花听牌';
-            const straightLabel = straightDraw.oesd ? 'open-ender' : 'gutshot';
+            const straightLabel = straightDraw.oesd ? '双头顺听牌' : '卡顺听牌';
             const eq     = calcExactDrawEquity(holeCards, board, true, drawSuit, straightDraw);
             const rawEq  = eq ? (isTurn ? eq.equityTurn : eq.equityFlop) : null;
             const eqNote = rawEq != null
                 ? (potOdds != null
-                    ? ` ~${rawEq}% equity, need ${potOdds}% to call${rawEq > potOdds ? ' — odds are there' : ' — close, but combo draws play strong as semi-bluffs'}.`
-                    : ` ~${rawEq}% equity to river.`)
+                    ? `~${rawEq}% 胜率，需要 ${potOdds}% 才能跟注${rawEq > potOdds ? '——赔率有利' : '——差一点，但组合听牌当半诈唬打很有力'}。`
+                    : `~${rawEq}% 到河牌的胜率。`)
                 : '';
             if (facingAction === 'bet') return _voice(
-                `${flushLabel} + ${straightLabel}.${eqNote} Big combo draw — strong semi-bluff candidate. Raise for fold equity or call if the price is right.${sprNote}${posNote}${oppStr}`,
-                `${flushLabel} and a ${straightLabel}, kid.${eqNote} You got a monster draw — raise and put the squeeze on, or call cheap if it's there.${sprNote}${posNote}${oppStr}`
+                `${flushLabel} + ${straightLabel}。${eqNote}大组合听牌——很强的半诈唬候选。加注拿弃牌权益，或者价格合适就跟注。${sprNote}${posNote}${oppStr}`,
+                `${flushLabel} 加上 ${straightLabel}，孩子。${eqNote}你这听牌太凶了——加注压上去，或者便宜就跟。${sprNote}${posNote}${oppStr}`
             );
             _setVerdict('value');
             return _voice(
@@ -4978,16 +4978,16 @@
             // Draw equity only — pair adds additional equity on top
             const eqNote = rawEq != null
                 ? (potOdds != null
-                    ? ` 听牌 equity: ~${rawEq}%（对子额外增加），需要 ${potOdds}% 才能跟注${rawEq > potOdds ? ' — 赔率有利' : ' — 赔率不利，对子 equity 可能弥补差距'}。`
-                    : ` 听牌 equity: ~${rawEq}%（加上对子的 equity）。`)
+                    ? `听牌胜率：~${rawEq}%（对子还能再加一些），需要 ${potOdds}% 才能跟注${rawEq > potOdds ? ' — 赔率有利' : ' — 赔率不利，对子的胜率可能补上差距'}。`
+                    : `听牌胜率：~${rawEq}%（再加上对子的胜率）。`)
                 : '';
             if (facingAction === 'bet') return _voice(
-                `${pairDesc} + ${drawType} 面对下注。${eqNote} 两种获胜方式。价格合适就跟注；别光靠听牌就把筹码全压上。${sprNote}${posNote}${oppStr}`,
-                `${pairDesc} 和 ${drawType}——他们下注了，孩子。${eqNote} 两种获胜方式。数学对就跟，但别只靠听牌建纪念碑。${sprNote}${posNote}${oppStr}`
+                `${pairDesc} + ${drawType} 面对下注。${eqNote}两种获胜方式。价格合适就跟注；别光靠听牌就把筹码全压上。${sprNote}${posNote}${oppStr}`,
+                `${pairDesc} 和 ${drawType}——他们下注了，孩子。${eqNote}两种获胜方式。数学对就跟，但别只靠听牌建纪念碑。${sprNote}${posNote}${oppStr}`
             );
             return _voice(
-                `${pairDesc} + ${drawType}。两种获胜方式——对子成牌或同花成牌。${eqNote} 半可玩性；别过度投入。${sprNote}${posNote}${oppStr}`,
-                `${pairDesc} 和 ${drawType}，孩子。两种获胜方式——对子站住或同花来。${eqNote} 保持合理，别玩疯了。${sprNote}${posNote}${oppStr}`
+                `${pairDesc} + ${drawType}。两种获胜方式——对子成牌或同花成牌。${eqNote}半可玩性；别过度投入。${sprNote}${posNote}${oppStr}`,
+                `${pairDesc} 和 ${drawType}，孩子。两种获胜方式——对子站住或同花来。${eqNote}保持合理，别玩疯了。${sprNote}${posNote}${oppStr}`
             );
         }
 
@@ -4996,11 +4996,11 @@
             const eq     = calcExactDrawEquity(holeCards, board, true, drawSuit, null);
             const rawEq  = eq ? (isTurn ? eq.equityTurn : eq.equityFlop) : null;
             // eqStr: plain equity % — used in weak-draw warning (parenthetical footnote)
-            const eqStr  = rawEq != null ? (isTurn ? `~${rawEq}% 成牌率` : `~${rawEq}% equity 到河牌`) : '';
+            const eqStr  = rawEq != null ? (isTurn ? `~${rawEq}% 成牌率` : `~${rawEq}% 到河牌的胜率`) : '';
             // eqNote: equity + pot odds verdict — used in main advice sentences
             const eqNote = rawEq != null
                 ? (potOdds != null
-                    ? ` ~${rawEq}% equity，需要 ${potOdds}% 才能跟注${rawEq > potOdds ? ' — 赔率有利' : ' — 赔率不利'} — `
+                    ? `~${rawEq}% 胜率，需要 ${potOdds}% 才能跟注${rawEq > potOdds ? ' — 赔率有利' : ' — 赔率不利'} — `
                     : ` ${eqStr} — `)
                 : ' ';
             if (flushIsWeak) {
@@ -5030,20 +5030,20 @@
             if (facingAction === 'bet') {
                 if (hasNutFlushDraw) {
                     if (isTurn) return _voice(
-                        `转牌上 ${drawType} 面对下注。${eqNote}强力半诈唬候选——加注剥夺 equity 或价格好就跟注。${posNote}`,
+                        `转牌上 ${drawType} 面对下注。${eqNote}强力半诈唬候选——加注剥夺胜率或价格好就跟注。${posNote}`,
                         `转牌上 ${drawType} 他们朝你下注。${eqNote}你拿着坚果听牌，伙计——加注让他们出汗，或价格合理就跟注。${posNote}`
                     );
                     return _voice(
-                        `翻牌上 ${drawType} 面对下注。${eqNote}你可以跟注或加注——坚果听牌让你在加注时有弃牌 equity。${posNote}`,
+                        `翻牌上 ${drawType} 面对下注。${eqNote}你可以跟注或加注——坚果听牌让你在加注时有弃牌权益。${posNote}`,
                         `翻牌上 ${drawType} 面对下注。${eqNote}你拿着坚果听牌，孩子——跟或加，你都有筹码。让他们弃牌或让他们付出代价。${posNote}`
                     );
                 }
                 if (isTurn) return _voice(
                     `转牌上 ${drawType} 面对下注。${eqNote}只剩一张牌——别跟大注去追。${posNote}`,
-                    `转牌上 ${drawType} 他们下注了。${eqNote}只剩一张牌救你，伙计——别往长 shot 扔筹码。${posNote}`
+                    `转牌上 ${drawType} 他们下注了。${eqNote}只剩一张牌救你，伙计——别把筹码扔在这种小概率上。${posNote}`
                 );
                 return _voice(
-                    `翻牌上 ${drawType} 面对下注。${eqNote}还有两张牌来，跟注合理；加注也有弃牌 equity 的价值。${posNote}`,
+                    `翻牌上 ${drawType} 面对下注。${eqNote}还有两张牌来，跟注合理；加注也有弃牌权益的价值。${posNote}`,
                     `翻牌上 ${drawType} 他们下注了。${eqNote}还有两张牌——跟注或加注拿下它，孩子。${posNote}`
                 );
             }
@@ -5052,7 +5052,7 @@
                 `转牌上 ${drawType}——只剩一张牌。${eqNote}拿着坚果听牌你可以加注，让他们三思。${posNote}`
             );
             return _voice(
-                `翻牌上 ${drawType}——还有两张牌。${eqNote}跟注没问题；坚果听牌时加注获取弃牌 equity 也合理。${posNote}`,
+                `翻牌上 ${drawType}——还有两张牌。${eqNote}跟注没问题；坚果听牌时加注获取弃牌权益也合理。${posNote}`,
                 `翻牌上 ${drawType}——还有两张牌。${eqNote}便宜就跟，孩子。拿着坚果听牌你就加注施压。${posNote}`
             );
         }
@@ -5065,16 +5065,16 @@
             // Draw equity only — pair adds additional equity on top of this
             const eqNote = rawEq != null
                 ? (potOdds != null
-                    ? ` 听牌 equity: ~${rawEq}%（对子额外增加），需要 ${potOdds}% 才能跟注${rawEq > potOdds ? ' — 赔率有利' : ' — 赔率不利，对子 equity 可能弥补差距'}。`
-                    : ` 听牌 equity: ~${rawEq}%（加上对子的 equity）。`)
+                    ? `听牌胜率：~${rawEq}%（对子还能再加一些），需要 ${potOdds}% 才能跟注${rawEq > potOdds ? ' — 赔率有利' : ' — 赔率不利，对子的胜率可能补上差距'}。`
+                    : `听牌胜率：~${rawEq}%（再加上对子的胜率）。`)
                 : '';
             if (facingAction === 'bet') return _voice(
-                `口袋对 + ${drawLabel} 面对下注。${eqNote} 两种获胜方式。价格合适就跟注；卡顺面对大注就弃牌。${sprNote}${posNote}${oppStr}`,
-                `口袋对加 ${drawLabel} 他们下注了，孩子。${eqNote} 两种获胜方式。数学对就跟，但卡顺面对大钱就弃。${sprNote}${posNote}${oppStr}`
+                `口袋对 + ${drawLabel} 面对下注。${eqNote}两种获胜方式。价格合适就跟注；卡顺面对大注就弃牌。${sprNote}${posNote}${oppStr}`,
+                `口袋对加 ${drawLabel} 他们下注了，孩子。${eqNote}两种获胜方式。数学对就跟，但卡顺面对大钱就弃。${sprNote}${posNote}${oppStr}`
             );
             return _voice(
-                `口袋对 + ${drawLabel}。两种获胜方式——对子成牌或顺子成牌。${eqNote} 别过度投入，但听牌让这手牌更有可玩性。${sprNote}${posNote}${oppStr}`,
-                `口袋对和 ${drawLabel}，孩子。两种获胜方式。${eqNote} 别玩疯了，但你不止一个补牌。${sprNote}${posNote}${oppStr}`
+                `口袋对 + ${drawLabel}。两种获胜方式——对子成牌或顺子成牌。${eqNote}别过度投入，但听牌让这手牌更有可玩性。${sprNote}${posNote}${oppStr}`,
+                `口袋对和 ${drawLabel}，孩子。两种获胜方式。${eqNote}别玩疯了，但你不止一个补牌。${sprNote}${posNote}${oppStr}`
             );
         }
 
@@ -5086,26 +5086,26 @@
             // eqNote: equity + pot odds verdict inserted before the action advice
             const eqNote = rawEqSD != null
                 ? (potOdds != null
-                    ? ` ~${rawEqSD}% equity，需要 ${potOdds}% 才能跟注${rawEqSD > potOdds ? ' — 赔率有利' : ' — 赔率不利'}。`
-                    : ` ~${rawEqSD}% equity.`)
+                    ? `~${rawEqSD}% 胜率，需要 ${potOdds}% 才能跟注${rawEqSD > potOdds ? ' — 赔率有利' : ' — 赔率不利'}。`
+                    : `~${rawEqSD}% 胜率。`)
                 : '';
             if (facingAction === 'bet') {
                 if (isTurn) return _voice(
-                    `转牌上 ${drawLabel} 面对下注。${eqNote} 只剩一张牌——卡顺面对任何真实下注都弃牌。${posNote}`,
-                    `转牌上 ${drawLabel} 他们下注了。${eqNote} 只剩一张牌救你——卡顺？他们下真钱你就赶紧走人，孩子。${posNote}`
+                    `转牌上 ${drawLabel} 面对下注。${eqNote}只剩一张牌——卡顺面对任何真实下注都弃牌。${posNote}`,
+                    `转牌上 ${drawLabel} 他们下注了。${eqNote}只剩一张牌救你——卡顺？他们下真钱你就赶紧走人，孩子。${posNote}`
                 );
                 return _voice(
-                    `翻牌上 ${drawLabel} 面对下注。${eqNote} 还有两张牌，双头顺可以跟；卡顺需要赔率合理才行。${posNote}`,
-                    `翻牌上 ${drawLabel} 他们下注了。${eqNote} 还有两张牌——双头顺可以跟，但卡顺最好有赔率，否则杜克弃掉。${posNote}`
+                    `翻牌上 ${drawLabel} 面对下注。${eqNote}还有两张牌，双头顺可以跟；卡顺需要赔率合理才行。${posNote}`,
+                    `翻牌上 ${drawLabel} 他们下注了。${eqNote}还有两张牌——双头顺可以跟，但卡顺最好有赔率，否则杜克弃掉。${posNote}`
                 );
             }
             if (isTurn) return _voice(
-                `转牌上 ${drawLabel}——只剩一次机会。${eqNote} 别在这跟大注。${posNote}`,
-                `转牌上 ${drawLabel}——只剩一次机会，伙计。${eqNote} 别靠希望和祈祷去跟大注。${posNote}`
+                `转牌上 ${drawLabel}——只剩一次机会。${eqNote}别在这跟大注。${posNote}`,
+                `转牌上 ${drawLabel}——只剩一次机会，伙计。${eqNote}别靠希望和祈祷去跟大注。${posNote}`
             );
             return _voice(
-                `翻牌上 ${drawLabel}——还有两张牌。${eqNote} 跟注合理；如果牌面符合你的范围，考虑半诈唬加注。${posNote}`,
-                `翻牌上 ${drawLabel}——还有两张牌。${eqNote} 便宜就看看，或者如果这牌面讲得通你的故事，就开一枪半诈唬，孩子。${posNote}`
+                `翻牌上 ${drawLabel}——还有两张牌。${eqNote}跟注合理；如果牌面符合你的范围，考虑半诈唬加注。${posNote}`,
+                `翻牌上 ${drawLabel}——还有两张牌。${eqNote}便宜就看看，或者如果这牌面讲得通你的故事，就开一枪半诈唬，孩子。${posNote}`
             );
         }
 
@@ -5125,8 +5125,8 @@
                 if (texture.isFlushy) w.push(`${texture.flushCards} 张同花牌在牌面`);
                 if (texture.straightConnected) w.push(`${texture.maxConnected} 张连牌`);
                 return w.length ? _voice(
-                    `小心：${w.join('; ')}。`,
-                    `这牌面有牙：${w.join('; ')}。`
+                    `小心：${w.join('；')}。`,
+                    `这牌面有牙：${w.join('；')}。`
                 ) : null;
             })();
 
@@ -5174,7 +5174,7 @@
                 // this branch genuinely carries both a value-bet and a marginal signal in that case
                 _setVerdict('value', topPairWetWarning ? 'marginal' : null);
                 return _voice(
-                    `顶对中等踢脚。翻前很激进——对手可能有同样的对子配 A 或 K 踢脚。你可能领先，但你不是 nuts。下注拿价值但别过度投入。${wetStr}${posNote}${oppStr}`,
+                    `顶对中等踢脚。翻前很激进——对手可能有同样的对子配 A 或 K 踢脚。你可能领先，但你不是坚果。下注拿价值但别过度投入。${wetStr}${posNote}${oppStr}`,
                     `顶对中等踢脚。翻前变激进了——他们可能有同样的对子配 A 或 K 踢脚。你可能领先但你可不是老大。下注拿价值，别全压进去。${wetStr}${posNote}${oppStr}`
                 );
             }
@@ -5226,7 +5226,7 @@
                     ? ` 牌面湿——下注意味着他们可能有听牌或更好的牌。`
                     : '';
                 if (drawLabel) return _voice(
-                    `低对 + ${drawLabel} 面对下注。听牌增加了 equity——价格合适就跟注，但别把筹码全压上。${sprNote}${posNote}${oppStr}`,
+                    `低对 + ${drawLabel} 面对下注。听牌增加了胜率——价格合适就跟注，但别把筹码全压上。${sprNote}${posNote}${oppStr}`,
                     `低对但你也有 ${drawLabel}，孩子。那个听牌给了你补牌——价格合适就跟，但别为它造怪物池。${sprNote}${posNote}${oppStr}`
                 );
                 _setVerdict('marginal');
@@ -5292,20 +5292,20 @@
         if (!isTurn && !isRiver && (hasBackdoorFlush || hasBackdoorStraight)) {
             const rrEq = _runnerRunnerEquity(holeCards, board);
             const equityParts = [];
-            if (hasBackdoorFlush)    equityParts.push(`${rrEq.flush}% flush`);
-            if (hasBackdoorStraight) equityParts.push(`${rrEq.straight}% straight`);
+            if (hasBackdoorFlush)    equityParts.push(`${rrEq.flush}% 同花`);
+            if (hasBackdoorStraight) equityParts.push(`${rrEq.straight}% 顺子`);
             const equityNote = equityParts.join(', ');
             const parts = [];
-            if (hasBackdoorFlush)    parts.push('backdoor flush draw (need runner-runner)');
+            if (hasBackdoorFlush)    parts.push('后门同花听牌（需要 runner-runner）');
             if (hasBackdoorStraight) parts.push('后门顺子听牌（需要 runner-runner）');
             const backdoorNote = parts.join(' 和 ');
             if (facingAction === 'bet') return _voice(
-                `你没有连接上但你有 ${backdoorNote}。低 equity——别仅仅因为这个就跟显著的下注。弃牌，除非你有很好的价格或有位置。${posNote}`,
-                `你没连接上但你有 ${backdoorNote}。低 equity——杜克可不为 runner-runner 的梦想买单。弃牌，除非价格基本是送的。${posNote}`
+                `你没有连接上但你有 ${backdoorNote}。低胜率——别仅仅因为这个就跟显著的下注。弃牌，除非你有很好的价格或有位置。${posNote}`,
+                `你没连接上但你有 ${backdoorNote}。低胜率——杜克可不为 runner-runner 的梦想买单。弃牌，除非价格基本是送的。${posNote}`
             );
             return _voice(
-                `你还没连接上但有 ${backdoorNote}。低 equity（~4-6%）——这给了你一个便宜看转牌的小理由，但别依赖它。${posNote}`,
-                `你啥也没中但你有 ${backdoorNote}。低 equity，大概 4-6%——如果他们给便宜转牌就拿，否则弃牌。别把你的未来押在上面。${posNote}`
+                `你还没连接上但有 ${backdoorNote}。低胜率（~4-6%）——这给了你一个便宜看转牌的小理由，但别依赖它。${posNote}`,
+                `你啥也没中但你有 ${backdoorNote}。低胜率，大概 4-6%——如果他们给便宜转牌就拿，否则弃牌。别把你的未来押在上面。${posNote}`
             );
         }
 
@@ -8637,13 +8637,13 @@
         const m = text.match(/Bet (\d+)[–-](\d+)% pot/);
         if (!m || bracket === 'behind' || bracket === 'fold_territory' || bracket === 'strong') return text;
         const note = bracket === 'dominant'
-            ? _voice(` Lean toward the ${m[2]}% end — the equity supports it.`, ` Lean toward the ${m[2]}% end, kid — the number backs it.`)
-            : _voice(` Lean toward the ${m[1]}% end for now.`, ` Lean toward the ${m[1]}% end for now, pal.`);
+            ? _voice(` 往上限 ${m[2]}% 靠——权益支持这么做。`, ` 往 ${m[2]}% 那个上限靠，孩子——数字撑得住。`)
+            : _voice(` 暂时先往 ${m[1]}% 那端靠。`, ` 暂时先往 ${m[1]}% 那端靠，伙计。`);
         // _applyWinContextCore's own fallback strips the message's trailing period to make room for
         // a bare "(NN%)" — insert the lean note before that paren instead of after it (so the equity
         // number stays the last thing shown), and restore a period first so it reads as its own
         // sentence instead of running on straight from "...pot Lean toward...".
-        const trailingPct = text.match(/\s\([<>]?\s?\d+(?:\.\d+)?%\)$/);
+        const trailingPct = text.match(/\s*[（(][<>]?\s?\d+(?:\.\d+)?%[）)]$/);
         if (trailingPct) {
             let base = text.slice(0, trailingPct.index);
             if (!/[.!?]$/.test(base)) base += '.';
@@ -8674,11 +8674,11 @@
         // reads as a contradiction, so frame the second one as an explicit clarification instead of
         // just appending a bare percentage. Same detection _applyWinContextCore uses for its own
         // hasDrawPct guard, so both agree on what counts as a draw message.
-        const isDrawPct = /~\d+%|equity/i.test(result);
-        if (!isDrawPct) return `${result} (${pct})`;
+        const isDrawPct = /~\d+%|equity|胜率|权益|成牌率/i.test(result);
+        if (!isDrawPct) return `${result}（${pct}）`;
         return result + _voice(
-            ` (That's chance to improve — real win vs their range: ~${pct}.)`,
-            ` (That's chance to improve, kid — real win vs their range: ~${pct}.)`
+            `（那是成牌率——真正打赢他们范围的胜率约 ${pct}。）`,
+            `（那是成牌率，孩子——真正打赢他们范围的胜率约 ${pct}。）`
         );
     }
 
@@ -8688,15 +8688,15 @@
 
         const isPreflop  = street === 'preflop';
         const isHeadsUp  = numOpp <= 1;
-        const hasDrawPct = /~\d+%|equity/.test(baseText); // draw messages already have equity baked in
+        const hasDrawPct = /~\d+%|equity|胜率|权益|成牌率/.test(baseText); // draw messages already have equity baked in
 
         // Pot odds verdict — appended where call/fold decisions are at stake
         // Only fires postflop when we have a facing bet amount
         const _isDuke = hudSettings.coachPersonality === 'duke';
         const poVerdict = (!isPreflop && potOdds != null)
             ? (win > potOdds
-                ? (_isDuke ? ` Need ${potOdds}% to call — the math's with you, kid.`   : ` Need ${potOdds}% to call — you have the equity.`)
-                : (_isDuke ? ` Need ${potOdds}% to call — odds ain't there, pal.`       : ` Need ${potOdds}% to call — odds are against you.`))
+                ? (_isDuke ? ` 需要 ${potOdds}% 才能跟注——数学站在你这边，孩子。`   : ` 需要 ${potOdds}% 才能跟注——权益站在你这边。`)
+                : (_isDuke ? ` 需要 ${potOdds}% 才能跟注——赔率不划算，伙计。`       : ` 需要 ${potOdds}% 才能跟注——赔率对你不利。`))
             : '';
 
         // Premium preflop hands — never override, the advice is correct regardless of field
@@ -8711,7 +8711,7 @@
         // MC can return 0 from 800 trials on a near-dead hand — show "< 1%" rather than "0%"
         const precise = aggressorHands >= 10;
         const pct     = win < 1 ? '< 1%' : `${win}%`;
-        const winWord = win < 1 ? 'under 1%' : (precise ? `sitting at ${win}%` : `around ${win}%`);
+        const winWord = win < 1 ? '不到 1%' : (precise ? `${win}%` : `大约 ${win}%`);
 
         // What the base message is recommending — set explicitly by getOwnHandLean at the
         // point it decided the verdict (see _setVerdict), instead of guessed here via regex
@@ -8728,7 +8728,7 @@
         // Win% brackets — context-aware (HU vs multi-way equity means different things)
         const bracket = _winBracket(win, isHeadsUp);
 
-        const oppStr = numOpp > 1 ? ` in a ${numOpp + 1}-way pot` : '';
+        const oppStr = numOpp > 1 ? `（${numOpp + 1} 人底池）` : '';
 
         // Deterministic variant picker — stable per message+equity combo, naturally varied across different spots
         const _seed = baseText.split('').reduce((a, c) => a + c.charCodeAt(0), 0) + Math.round(win);
@@ -8912,7 +8912,7 @@
         }
 
         // Fallback: equity is always available — show it so the player can always see the number
-        return baseText.replace(/\.$/, '') + ` (${pct})`;
+        return baseText.replace(/\.$/, '') + `（${pct}）`;
     }
 
     // ── Bluff awareness system ────────────────────────────────────
@@ -9198,8 +9198,8 @@
         // Opponent called prior bluff and now checks — could be floating or weak
         if (calledCount > 0 && oppChecked3 && facingAction === 'check') {
             if (gs.score >= 4) return _voice(
-                `他们跟了你的 ${bl.facingCallStreets.join('/')} 下注${barrelNote}然后过牌。可能是缠打或听牌。在这里继续有弃牌 equity。${ctx}${stackWarn}`,
-                `他们跟了你的 ${bl.facingCallStreets.join('/')} 下注${barrelNote}然后过牌。可能是缠打或弱牌。弃牌 equity 在那里。${ctx}${stackWarn}`
+                `他们跟了你的 ${bl.facingCallStreets.join('/')} 下注${barrelNote}然后过牌。可能是缠打或听牌。在这里继续有弃牌权益。${ctx}${stackWarn}`,
+                `他们跟了你的 ${bl.facingCallStreets.join('/')} 下注${barrelNote}然后过牌。可能是缠打或弱牌。弃牌权益在那里。${ctx}${stackWarn}`
             );
             return _voice(
                 `他们跟了你的 ${bl.facingCallStreets.join('/')} 下注${barrelNote}然后过牌。他们表现出了兴趣——小心。${ctx}${stackWarn}`,
@@ -18216,7 +18216,7 @@
                         <span class="tphud-help-term">胜率 %（Equity）</span>
                         <span class="tphud-help-def">你当前这手牌的预计胜率——取决于你的底牌、公共牌，以及对手可能拿着的牌。<br><em>例：「3 人底池里的 18.5%」——把这个局面重演 100 次，你大约赢 18 次。你正处于落后。不要做大底池。</em></span>
 
-                        <span class="tphud-help-term">Need X% to call</span>
+                        <span class="tphud-help-term">需要 X% 才能跟注</span>
                         <span class="tphud-help-def">长期来看，跟注要能赚钱所需的最低胜率。你的胜率高于这个数，跟注就是盈利的；低于这个数，弃牌长期能省下筹码。<br><em>例：「跟注需要 28%」——你的牌有 36% 胜率 → 跟注盈利。只有 20% → 弃牌。</em></span>
 
                         <span class="tphud-help-term">底池赔率</span>
@@ -18234,16 +18234,16 @@
 
                     <div class="tphud-help-sec">听牌胜率</div>
                     <div class="tphud-help-grid">
-                        <span class="tphud-help-term">~X% equity to river</span>
+                        <span class="tphud-help-term">~X% 到河牌的胜率</span>
                         <span class="tphud-help-def">到河牌做成你这手听牌的概率（翻牌时还有两张牌没发）。<br><em>算法：翻牌时 出路 × 4，转牌时 出路 × 2。</em></span>
 
                         <span class="tphud-help-term">出路</span>
                         <span class="tphud-help-def">牌堆里还能补成你这手牌的牌。<br><em>同花听牌 = 9 个出路（到河牌约 36% 成牌）。<br>双头顺听牌 = 8 个出路（约 32%）。<br>卡顺听牌 = 4 个出路（约 16%）。</em></span>
 
-                        <span class="tphud-help-term">Odds are there ✓</span>
+                        <span class="tphud-help-term">赔率有利 ✓</span>
                         <span class="tphud-help-def">你的听牌胜率高于跟注所需——这个跟注长期在数学上是盈利的。<br><em>例：听牌胜率 36%，跟注需要 28% → 跟。</em></span>
 
-                        <span class="tphud-help-term">Odds against you ✗</span>
+                        <span class="tphud-help-term">赔率不利 ✗</span>
                         <span class="tphud-help-def">你的听牌胜率达不到跟注所需的百分比——除非另有理由（弃牌权益、隐含赔率），否则长期跟注是亏钱的。<br><em>例：听牌胜率 16%，跟注需要 33% → 弃掉卡顺。</em></span>
                     </div>
 
