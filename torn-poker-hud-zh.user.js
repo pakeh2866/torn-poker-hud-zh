@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.12.9
+// @version      6.13.0
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -8634,7 +8634,7 @@
     // at the same generic size. Only touches value-bet messages that actually embedded a
     // getBetSizing() range; leaves everything else untouched.
     function _refineBetSizingForEquity(text, bracket) {
-        const m = text.match(/Bet (\d+)[–-](\d+)% pot/);
+        const m = text.match(/(?:Bet|下注)\s*(\d+)\s*[–\-—~]\s*(\d+)\s*%/);
         if (!m || bracket === 'behind' || bracket === 'fold_territory' || bracket === 'strong') return text;
         const note = bracket === 'dominant'
             ? _voice(` 往上限 ${m[2]}% 靠——权益支持这么做。`, ` 往 ${m[2]}% 那个上限靠，孩子——数字撑得住。`)
@@ -8646,7 +8646,7 @@
         const trailingPct = text.match(/\s*[（(][<>]?\s?\d+(?:\.\d+)?%[）)]$/);
         if (trailingPct) {
             let base = text.slice(0, trailingPct.index);
-            if (!/[.!?]$/.test(base)) base += '.';
+            if (!/[。！？.!?]$/.test(base)) base += /[\u4e00-\u9fff]$/.test(base) ? '。' : '.';
             return base + note + trailingPct[0];
         }
         return text + note;
@@ -8705,7 +8705,7 @@
         // Draw messages already carry their own equity — leave them alone
         if (hasDrawPct) return baseText;
         // "Unbeatable" hands don't need equity context
-        if (/unbeatable|cannot lose/i.test(baseText)) return baseText;
+        if (/unbeatable|cannot lose|不可战胜|不可能输|输不了|能打败你/i.test(baseText) || /^(皇家同花顺|同花顺|四条)/.test(baseText)) return baseText;
 
         // Confidence phrase — hedged when range data is sparse
         // MC can return 0 from 800 trials on a near-dead hand — show "< 1%" rather than "0%"
@@ -8722,7 +8722,7 @@
         const isOvercards  = !!verdictFlags?.overcards;
 
         // Get the hand noun from the start of the message (e.g. "Top pair", "Set", "Overpair")
-        const nounMatch = baseText.match(/^(Full house|Flush|Straight|Quads|Set|Trips|Two pair|Overpair|Top pair|Low pair|[^.!,—\-]+)/);
+        const nounMatch = baseText.match(/^(皇家同花顺|同花顺|四条|葫芦|暗三条|三条|两对|超对|顶对|低对|同花|顺子|高张|边缘牌|口袋对|Full house|Flush|Straight|Quads|Set|Trips|Two pair|Overpair|Top pair|Low pair|[^。，；：！？、（）,.!;:()—–\-]+)/);
         const noun      = nounMatch ? nounMatch[1].trim() : baseText.split(' ').slice(0, 2).join(' ');
 
         // Win% brackets — context-aware (HU vs multi-way equity means different things)
@@ -8842,7 +8842,7 @@
 
         // OVERCARDS: equity IS the story — how live are they really?
         if (isOvercards) {
-            const facingBet = /facing a bet/i.test(baseText);
+            const facingBet = /facing a bet|面对下注/i.test(baseText);
             if (bracket === 'fold_territory') return facingBet
                 ? (_isDuke
                     ? _pick([
@@ -9387,11 +9387,11 @@
         const isFreqBluff = agBluffRate !== null && agBluffRate >= 0.35;
 
         // What the coach last recommended
-        const coachSaidFold = lastOwnLean ? /\bfold\b/i.test(lastOwnLean) : null;
+        const coachSaidFold = lastOwnLean ? /\bfold\b|弃牌|走人|止损|走开|放手/i.test(lastOwnLean) : null;
         const coachSaidCall = !coachSaidFold && !!lastOwnLean && hadEquity && equity >= 30;
 
         // Draw detection from last coach advice text
-        const hadDraw = !!lastOwnLean && /\b(flush draw|straight draw|OESD|gutshot|\d+ outs)\b/i.test(lastOwnLean);
+        const hadDraw = !!lastOwnLean && /\b(flush draw|straight draw|OESD|gutshot|\d+ outs)\b|同花听牌|顺子听牌|双头顺|卡顺|后门听牌|出路/i.test(lastOwnLean);
 
         // Pot odds needed to break even on last turn (saved when coach last fired)
         const oddsNeeded   = lastPotOddsNeeded;
@@ -10058,7 +10058,7 @@
         const fracM = text.match(/(\d+)\/(\d+)\s*pot/i);
         if (fracM) return Math.round(parseInt(fracM[1], 10) / parseInt(fracM[2], 10) * 100);
         // "50-75% pot" or "75% pot"
-        const rangeM = text.match(/(\d+)(?:\s*[–\-]\s*(\d+))?\s*%\s*pot/i);
+        const rangeM = text.match(/(\d+)(?:\s*[–\-—~]\s*(\d+))?\s*%\s*(?:pot|底池)/i);
         if (rangeM) {
             const lo = parseInt(rangeM[1], 10);
             const hi = rangeM[2] ? parseInt(rangeM[2], 10) : lo;
@@ -10099,14 +10099,14 @@
         const potPct   = Math.round(betAmount / pot * 100);
         const stackPct = stack > 0 ? Math.round(betAmount / stack * 100) : null;
         const lean     = lastOwnLean || '';
-        const stackLine = stackPct != null ? ` That's ${stackPct}% of your stack.` : '';
+        const stackLine = stackPct != null ? `这占你筹码的 ${stackPct}%。` : '';
 
         // Fold/caution guards — always apply, independent of sizing logic
-        const isFoldConclusion     = /\bfold\b/i.test(lean);
-        const isCautiousConclusion = /\b(check\/fold|be cautious|mixed spot|weigh (a |the )?call|marginal spot|too risky)\b/i.test(lean);
+        const isFoldConclusion     = /\bfold\b|弃牌|走人|止损|走开|放手/i.test(lean);
+        const isCautiousConclusion = /\b(check\/fold|be cautious|mixed spot|weigh (a |the )?call|marginal spot|too risky)\b|边缘|谨慎|别过度投入|保持底池小|保持极小|注意：/i.test(lean);
 
         if (isFoldConclusion && potPct >= 60) {
-            return `教练说弃牌，你却下了 ${potPct}% 底池。${stackLine} 这一手你最好有很硬的读牌。`;
+            return `教练说弃牌，你却下了 ${potPct}% 底池。${stackLine}这一手你最好有很硬的读牌。`;
         }
         if (isFoldConclusion && potPct >= 25) {
             return `教练说弃牌——这个 ${potPct}% 底池的下注就是诈唬。确认你是故意的。`;
@@ -10143,13 +10143,13 @@
         const recStr = recLo === recHi ? `${recLo}%` : `${recLo}–${recHi}%`;
 
         if (potPct > recHi + 20) {
-            return `With ~${Math.round(ctx.equity)}% equity, recommended sizing is ${recStr} pot. You're at ${potPct}% — that's an overbet.${stackLine}`;
+            return `胜率约 ${Math.round(ctx.equity)}%，建议下注尺度是 ${recStr} 底池。你却下了 ${potPct}%——这是超池。${stackLine}`;
         }
         if (potPct < recLo - 15 && potPct > 0) {
-            return `With ~${Math.round(ctx.equity)}% equity, recommended sizing is ${recStr} pot. You're at ${potPct}% — undersizing leaves value behind.`;
+            return `胜率约 ${Math.round(ctx.equity)}%，建议下注尺度是 ${recStr} 底池。你只下了 ${potPct}%——下注偏小会漏掉价值。`;
         }
         if (tier !== 'thin' && potPct >= recLo && potPct <= recHi) {
-            return `Sizing looks right — ${potPct}% pot matches the recommended range for this hand (~${Math.round(ctx.equity)}% equity).`;
+            return `尺度没问题——${potPct}% 底池正好落在这手牌的建议区间内（胜率约 ${Math.round(ctx.equity)}%）。`;
         }
         return null;
     }
@@ -13522,7 +13522,7 @@
             const postAgg = (s.postBets || 0) + (s.postRaises || 0);
             const postPass = (s.postCalls || 0) + (s.postChecks || 0);
             if (afqPct >= 50)
-                bullets.push(`A翻牌后下注或加注率 <b>${afqPct}%</b> of the time — ${postAgg} 次攻击性行动 vs ${postPass} 次被动行动.非常活跃.`);
+                bullets.push(`翻牌后非常活跃 — 下注或加注率 <b>${afqPct}%</b>（攻击性 ${postAgg} 次，被动 ${postPass} 次）。`);
             else if (afqPct >= 30)
                 bullets.push(`翻牌后适度活跃 — 下注或加注率 <b>${afqPct}%</b>（攻击性${postAgg}次，被动${postPass}次）。`);
             else
