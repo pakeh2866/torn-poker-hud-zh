@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.13.1
+// @version      6.13.2
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -11550,8 +11550,8 @@
                 const smallRate = rate(pot.small), bigRate = rate(pot.big);
                 if (Math.abs(smallRate - bigRate) * 100 >= 20) {
                     candidates.push({ dimension: 'pot', text: smallRate > bigRate
-                        ? `In big pots specifically, only ${pot.big.weak} of ${bigN} (${pct(bigRate)}%) — their small-pot showdowns (${pot.small.weak}/${smallN}, ${pct(smallRate)}%) are where the weak hands show up.`
-                        : `In big pots specifically, ${pot.big.weak} of ${bigN} (${pct(bigRate)}%) were weak — worse than their small-pot rate (${pot.small.weak}/${smallN}, ${pct(smallRate)}%).`
+                        ? `大底池里只有 ${bigN} 次中的 ${pot.big.weak} 次（${pct(bigRate)}%）是弱牌——弱牌主要出现在他们的小底池摊牌里（${pot.small.weak}/${smallN}，${pct(smallRate)}%）。`
+                        : `大底池里 ${bigN} 次中有 ${pot.big.weak} 次（${pct(bigRate)}%）是弱牌——比他们小底池的弱牌率还高（${pot.small.weak}/${smallN}，${pct(smallRate)}%）。`
                     });
                 }
             }
@@ -11565,8 +11565,8 @@
                 const passiveRate = rate(aggro.passive), aggroRate = rate(aggro.aggressive);
                 if (Math.abs(passiveRate - aggroRate) * 100 >= 20) {
                     candidates.push({ dimension: 'aggro', text: aggroRate < passiveRate
-                        ? `When they're the one betting, only ${aggro.aggressive.weak} of ${aggroN} (${pct(aggroRate)}%) are weak — their bets mean more than their calls (${aggro.passive.weak}/${passiveN}, ${pct(passiveRate)}% when passive).`
-                        : `Even when they're betting, ${aggro.aggressive.weak} of ${aggroN} (${pct(aggroRate)}%) show up weak — sizing alone won't save you here.`
+                        ? `他们主动下注时，${aggroN} 次里只有 ${aggro.aggressive.weak} 次（${pct(aggroRate)}%）是弱牌——他们的下注比跟注更有分量（被动时 ${aggro.passive.weak}/${passiveN}，${pct(passiveRate)}%）。`
+                        : `即使他们主动下注，${aggroN} 次里也有 ${aggro.aggressive.weak} 次（${pct(aggroRate)}%）是弱牌——光看下注尺度救不了你。`
                     });
                 }
             }
@@ -13503,30 +13503,30 @@
 
         const pfrPct = Math.round(dm.pfr * 100);
         if (s.pfrCount === 0)
-            bullets.push(`在${n}手牌中一次都没有翻牌前加注 — 总是跟注或弃牌。`);
+            bullets.push(`在${n}手牌中一次都没有翻前加注——总是跟注或弃牌。`);
         else if (pfrPct >= 30)
-            bullets.push(`Raises preflop <b>${pfrPct}%</b> of the time — ${s.pfrCount} raises out of ${n} hands. Almost always comes in with aggression.`);
+            bullets.push(`翻前加注率 <b>${pfrPct}%</b>——${n} 手牌里加注 ${s.pfrCount} 次。几乎总是带着攻击性进池。`);
         else if (pfrPct >= 15)
-            bullets.push(`Raises preflop <b>${pfrPct}%</b> of the time — ${s.pfrCount} raises in ${n} hands.`);
+            bullets.push(`翻前加注率 <b>${pfrPct}%</b>——${n} 手牌里加注 ${s.pfrCount} 次。`);
         else
-            bullets.push(`Rarely raises preflop — only <b>${pfrPct}%</b> of hands (${s.pfrCount} times in ${n}). Mostly calls when they do enter.`);
+            bullets.push(`很少翻前加注——只占 <b>${pfrPct}%</b> 的手牌（${n} 手里 ${s.pfrCount} 次）。入池时大多是跟注。`);
 
         const gapPct = Math.round(dm.gap * 100);
         if (callsOnly > 0 && gapPct >= 15)
-            bullets.push(`Called without raising <b>${callsOnly} times</b> preflop — prefers to limp or flat-call rather than raise.`);
+            bullets.push(`翻前跟注不加注 <b>${callsOnly} 次</b>——偏爱溜入或平跟，而不是加注。`);
         else if (s.pfrCount > 0 && gapPct < 5)
-            bullets.push(`入池时几乎总是加注 — 极少翻牌前平跟。`);
+            bullets.push(`入池时几乎总是加注——极少翻前平跟。`);
 
         if (dm.afqReliable) {
             const afqPct = Math.round(dm.afq * 100);
             const postAgg = (s.postBets || 0) + (s.postRaises || 0);
             const postPass = (s.postCalls || 0) + (s.postChecks || 0);
             if (afqPct >= 50)
-                bullets.push(`翻牌后非常活跃 — 下注或加注率 <b>${afqPct}%</b>（攻击性 ${postAgg} 次，被动 ${postPass} 次）。`);
+                bullets.push(`翻牌后非常活跃——下注或加注率 <b>${afqPct}%</b>（攻击性 ${postAgg} 次，被动 ${postPass} 次）。`);
             else if (afqPct >= 30)
-                bullets.push(`翻牌后适度活跃 — 下注或加注率 <b>${afqPct}%</b>（攻击性${postAgg}次，被动${postPass}次）。`);
+                bullets.push(`翻牌后适度活跃——下注或加注率 <b>${afqPct}%</b>（攻击性 ${postAgg} 次，被动 ${postPass} 次）。`);
             else
-                bullets.push(`翻牌后偏被动 — 大多过牌或跟注。仅 <b>${afqPct}%</b> 的次数下注或加注（${postAgg}次攻击性 vs ${postPass}次被动）。`);
+                bullets.push(`翻牌后偏被动——大多过牌或跟注。仅 <b>${afqPct}%</b> 的次数下注或加注（攻击性 ${postAgg} 次 vs 被动 ${postPass} 次）。`);
         } else {
             const postTotal = (s.postBets || 0) + (s.postRaises || 0) + (s.postCalls || 0) + (s.postChecks || 0) + (s.postFolds || 0);
             if (postTotal < 5)
@@ -13537,9 +13537,9 @@
             const wtsdPct = Math.round(dm.wtsd * 100);
             const wsdPct  = Math.round(dm.wsd * 100);
             if (wtsdPct >= 50)
-                bullets.push(`看到翻牌后有 <b>${wtsdPct}%</b> 的情况会走到摊牌 — 很难让他们弃牌。共 ${s.wentToShowdownCount} 次摊牌。`);
+                bullets.push(`看到翻牌后有 <b>${wtsdPct}%</b> 的情况会走到摊牌——很难让他们弃牌。共 ${s.wentToShowdownCount} 次摊牌。`);
             else
-                bullets.push(`大多数情况下在摊牌前就弃牌 — 看到翻牌后只有 <b>${wtsdPct}%</b> 走到最后。共 ${s.wentToShowdownCount} 次摊牌。`);
+                bullets.push(`大多数情况下在摊牌前就弃牌——看到翻牌后只有 <b>${wtsdPct}%</b> 走到最后。共 ${s.wentToShowdownCount} 次摊牌。`);
 
             if (s.wentToShowdownCount >= 3)
                 bullets.push(`摊牌时赢 <b>${wsdPct}%</b>（${s.wentToShowdownCount} 次摊牌赢了 ${s.wonAtShowdownCount} 次）。`);
@@ -13548,7 +13548,7 @@
         if (s.wentToShowdownCount >= 3) {
             const weakRate = Math.round((s.showdownWeak / s.wentToShowdownCount) * 100);
             const conditionedNote = _showdownConditionedNote(s);
-            const conditionedTxt = conditionedNote ? ` ${conditionedNote}` : '';
+            const conditionedTxt = conditionedNote || '';
             if (s.showdownWeak >= 2 && weakRate > 50)
                 bullets.push(`经常拿弱牌走到摊牌——<b>${s.wentToShowdownCount} 次里有 ${s.showdownWeak} 次</b>是单张或一对。${conditionedTxt}`);
             else if (s.showdownStrong >= 3 && (s.showdownStrong / s.wentToShowdownCount) > 0.65)
@@ -13564,18 +13564,18 @@
                 const barrelRate  = (s.ucBarrelWinCount|| 0) / ucTotal;
                 const passiveRate = (s.ucPassiveCount  || 0) / ucTotal;
                 if (stealRate > 0.40)
-                    bullets.push(`Preflop steals make up <b>${Math.round(stealRate * 100)}%</b> of their uncontested wins — may be stealing wide.`);
+                    bullets.push(`翻前偷盲占他们无争议赢池的 <b>${Math.round(stealRate * 100)}%</b>——可能在宽范围偷盲。`);
                 if (cbetRate + barrelRate > 0.50)
-                    bullets.push(`C-bets or barrels <b>${Math.round((cbetRate + barrelRate) * 100)}%</b> of uncontested wins — applies post-flop pressure. Consider floating or check-raising.`);
+                    bullets.push(`C-bet 或连续开火占无争议赢池的 <b>${Math.round((cbetRate + barrelRate) * 100)}%</b>——翻后持续施压。可以考虑漂浮跟注或过牌加注。`);
                 if (passiveRate > 0.30)
-                    bullets.push(`Wins passively (without betting) <b>${Math.round(passiveRate * 100)}%</b> of the time — opponents give up against them often.`);
+                    bullets.push(`被动赢下（不下注）<b>${Math.round(passiveRate * 100)}%</b>——对手经常直接放弃给他们。`);
             }
         }
 
         const bigRaises = hist.filter(e => e.preflopRaiseAmt).slice(0, 3);
         if (bigRaises.length >= 2) {
             const amounts = bigRaises.map(e => `$${e.preflopRaiseAmt.toLocaleString()}`).join(', ');
-            bullets.push(`Recent preflop raise amounts from history: <b>${amounts}</b>.`);
+            bullets.push(`近期翻前加注额（来自历史记录）：<b>${amounts}</b>。`);
         }
 
         const sdHands = hist.filter(e => e.cards && e.handName).slice(0, 3);
@@ -13593,15 +13593,15 @@
             if (riverBets + riverRaises > 0) parts.push(`下注/加注${riverBets + riverRaises}次`);
             if (riverCalls > 0) parts.push(`跟注${riverCalls}次`);
             if (riverFolds > 0) parts.push(`弃牌${riverFolds}次`);
-            bullets.push(`河牌行动（来自历史记录）：${parts.join(', ')}。`);
+            bullets.push(`河牌行动（来自历史记录）：${parts.join('，')}。`);
         }
 
-        let confNote = `Label based on <b>${n} hands</b> — `;
+        let confNote = `基于 <b>${n} 手牌</b>——`;
         if      (confLabel === '低')       confNote += '初步判断，模式可能还会变化。';
         else if (confLabel === '中')    confNote += '模式正在形成，但仍可能改变。';
         else if (confLabel === '高')      confNote += '目前较为可靠。';
         else if (confLabel === '极高') confNote += '非常可靠的判断。';
-        if (margin < 0.14) confNote += ' <i>(Close match with another style — could be adapting.)</i>';
+        if (margin < 0.14) confNote += '<i>（与另一种风格接近——可能正在调整打法。）</i>';
         bullets.push(confNote);
 
         const bluffSignals = [];
@@ -13614,12 +13614,12 @@
         if (s.showdownWeak >= 2 && s.wentToShowdownCount >= 3) {
             const weakRate = Math.round((s.showdownWeak / s.wentToShowdownCount) * 100);
             const conditionedNote = _showdownConditionedNote(s);
-            bluffSignals.push(`<b>${s.showdownWeak} of ${s.wentToShowdownCount}</b> showdowns had only a pair or high card (${weakRate}%) — often calls all the way down with weak hands.${conditionedNote ? ` ${conditionedNote}` : ''}`);
+            bluffSignals.push(`<b>${s.wentToShowdownCount} 次摊牌里有 ${s.showdownWeak} 次</b>只有一对或高牌（${weakRate}%）——经常一路用弱牌跟到底。${conditionedNote || ''}`);
         }
 
         const riverAggCount = hist.filter(e => e.riverAction && (e.riverAction.startsWith('bet') || e.riverAction.startsWith('raised'))).length;
         if (riverAggCount >= 2)
-            bluffSignals.push(`Bet or raised on the river <b>${riverAggCount}</b> times in recorded history.`);
+            bluffSignals.push(`有记录的河牌下注或加注 <b>${riverAggCount}</b> 次。`);
 
         if (dm.afqReliable && dm.afq > 0.45 && dm.wtsd < 0.25 && s.sawFlopCount >= 3)
             bluffSignals.push(`翻牌后高攻击性（${pct(dm.afq)}）但很少走到摊牌（${pct(dm.wtsd)}）— 可能经常诈唬让对手弃牌。`);
@@ -13632,13 +13632,13 @@
             const looseRate = (s.looseCallCount || 0) / tv;
 
             if (bluffRate > 0.40)
-                bluffSignals.push(`Card analysis: bluffs <b>${Math.round(bluffRate * 100)}%</b> of showdown hands (${s.bluffCount}/${tv} verdicts) — call their river bets lighter.`);
+                bluffSignals.push(`看牌分析：诈唬占摊牌手牌 <b>${Math.round(bluffRate * 100)}%</b>（${s.bluffCount}/${tv} 次判定）——可以用更松的牌跟他们的河牌下注。`);
             if (valueRate > 0.60)
-                bluffSignals.push(`Card analysis: shows real hands <b>${Math.round(valueRate * 100)}%</b> of the time — fold to their river bets unless you have top pair+.`);
+                bluffSignals.push(`看牌分析：真有牌 <b>${Math.round(valueRate * 100)}%</b>——除非你有顶对以上，否则别跟他们的河牌下注。`);
             if (drawRate > 0.35)
-                bluffSignals.push(`Card analysis: chases draws <b>${Math.round(drawRate * 100)}%</b> of showdowns — charge them on wet boards.`);
+                bluffSignals.push(`看牌分析：追听牌占摊牌 <b>${Math.round(drawRate * 100)}%</b>——湿润牌面上要多收他们的钱。`);
             if (looseRate > 0.30)
-                bluffSignals.push(`Card analysis: calls too wide <b>${Math.round(looseRate * 100)}%</b> of showdowns — bet thin for value, they call too much.`);
+                bluffSignals.push(`看牌分析：跟注太宽占摊牌 <b>${Math.round(looseRate * 100)}%</b>——可以做薄价值下注，他们跟得太多。`);
         }
 
         // Turn/river facing stats coaching
@@ -13650,33 +13650,33 @@
         if (facedTurn >= 5) {
             const foldRate = foldVsTurn / facedTurn;
             if (foldRate > 0.65)
-                bluffSignals.push(`面对转牌下注弃牌率 <b>${Math.round(foldRate * 100)}%</b> — 可被剥削，考虑在转牌更多漂浮跟注。`);
+                bluffSignals.push(`面对转牌下注弃牌率 <b>${Math.round(foldRate * 100)}%</b>——可被剥削，考虑在转牌更多漂浮跟注。`);
         }
         if (facedRiver >= 5) {
             const foldRate = foldVsRiver / facedRiver;
             if (foldRate > 0.70)
-                bluffSignals.push(`面对河牌下注弃牌率 <b>${Math.round(foldRate * 100)}%</b> — 弃牌过多，可以用中等强度的牌把他们诈唬走。`);
+                bluffSignals.push(`面对河牌下注弃牌率 <b>${Math.round(foldRate * 100)}%</b>——弃牌过多，可以用中等强度的牌把他们诈唬走。`);
         }
 
         const ucTotal = s.ucTotalVerdicts || 0;
         if (ucTotal >= 3) {
             if ((s.ucBarrelWinCount || 0) >= 2)
-                bluffSignals.push(`多条街连续下注 <b>${s.ucBarrelWinCount}</b> 次并拿下无争议底池 — 持续施压。可能是价值也可能是诈唬。`);
+                bluffSignals.push(`多条街连续下注 <b>${s.ucBarrelWinCount}</b> 次并拿下无争议底池——持续施压。可能是价值也可能是诈唬。`);
             if ((s.ucOverbetCount || 0) >= 1)
-                bluffSignals.push(`用超池下注施压 <b>${s.ucOverbetCount}</b> 次赢下无争议底池 — 极化下注尺寸，很可能极强或是在诈唬。`);
+                bluffSignals.push(`用超池下注施压 <b>${s.ucOverbetCount}</b> 次赢下无争议底池——极化下注尺寸，很可能极强或是在诈唬。`);
             if ((s.ucStealCount || 0) >= 3 && (s.ucStealCount / ucTotal) > 0.50)
-                bluffSignals.push(`翻前偷盲 <b>${s.ucStealCount}/${ucTotal}</b> 次无争议赢池 — 偷盲频率高，考虑更宽范围防守。`);
+                bluffSignals.push(`翻前偷盲 <b>${s.ucStealCount}/${ucTotal}</b> 次无争议赢池——偷盲频率高，考虑更宽范围防守。`);
         }
 
         if (bluffSignals.length === 0)
             bluffSignals.push('尚未检测到强烈诈唬信号。需要更多摊牌和河牌历史。');
 
         return `
-            <div class="tphud-sec">Why ${resolvedType(type).label}?</div>
+            <div class="tphud-sec">为什么是 ${resolvedType(type).label}？</div>
             <ul class="tphud-reasons">
                 ${bullets.map(b => `<li>${b}</li>`).join('')}
             </ul>
-            <div class="tphud-sec" style="margin-top:14px">Bluff Signals</div>
+            <div class="tphud-sec" style="margin-top:14px">诈唬信号</div>
             <ul class="tphud-reasons">
                 ${bluffSignals.map(b => `<li>${b}</li>`).join('')}
             </ul>`;
