@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.13.2
+// @version      6.13.3
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -2403,7 +2403,7 @@
         if (p.raisedPreflop && !parts.some(x => x.includes('preflop'))) parts.unshift('翻牌前加注');
         return parts.join(', ');
     }
-
+    const STREET_CN = { preflop: '翻前', flop: '翻牌', turn: '转牌', river: '河牌' }; const streetCn = s => STREET_CN[s] || s;
     function checkAutoTagsAtFinalization(name, p, currentHand, streetBoards = {}) {
         if (!hudSettings.autoTagPlays) return;
         if (name === localPlayerName) return;
@@ -2488,7 +2488,7 @@
         overbets.forEach(ob => {
             const pct = Math.round(ob.amt / ob.potBefore * 100);
             appendAutoTag(name, {
-                label:      `${ob.street} 超池下注`,
+                label:      `${streetCn(ob.street)} 超池下注`,
                 handCards,
                 handName,
                 boardCards: board,
@@ -2502,7 +2502,7 @@
         ([...new Set(p.checkRaiseStreets || [])]).forEach(street => {
             const crRank = _streetRankFor(streetBoards[street]);
             appendAutoTag(name, {
-                label:      `${street} 过牌-加注`,
+                label:      `${streetCn(street)} 过牌-加注`,
                 handCards,
                 handName:   crRank >= 0 ? rankToHandName(crRank) : handName,
                 boardCards: board,
@@ -2552,7 +2552,7 @@
                 const slowStreetRank = slowplayFlop ? flopRank : turnRank;
                 const slowHandName   = rankToHandName(slowStreetRank) || '强牌';
                 appendAutoTag(name, {
-                    label:      `慢打 ${slowHandName}——${slowStreet} 过牌`,
+                    label:      `慢打 ${slowHandName}——${streetCn(slowStreet)} 过牌`,
                     handCards,
                     handName:   slowHandName,
                     boardCards: board,
@@ -16883,7 +16883,7 @@
 
         const autoTagList = s.autoTags || [];
         const autoTagsHtml = autoTagList.length > 0 ? `
-            <div class="tphud-sec">Auto-Tagged 入池率</div>
+            <div class="tphud-sec">自动标记的显著玩法</div>
             <div class="tphud-autotags">
                 ${autoTagList.map(t => `<div class="tphud-autotag">${escHtml(t)}</div>`).join('')}
             </div>` : '';
@@ -17765,73 +17765,73 @@
             const inWindow = uniqueRankVals.filter(v => v >= lo && v <= lo + 4);
             if (inWindow.length >= 4) { hasStraightDraw = true; break; }
         }
-
-        // Pattern count: how many tags share this same label
-        const patternCount = (allTags || []).filter(t => typeof t === 'object' && t.label === label).length;
-        const nthTime = patternCount > 1 ? `That's ${patternCount === 2 ? 'the second' : patternCount === 3 ? 'third' : `${patternCount}th`} time` : null;
+        const _kindOf = l => (l.startsWith('Overbet') || l.endsWith('超池下注')) ? 'overbet' : (l.startsWith('Check-raised') || l.endsWith('过牌-加注')) ? 'checkraise' : (l.startsWith('Slowplayed') || l.startsWith('慢打')) ? 'slowplay' : l;
+        // Pattern count: how many tags share this same type
+        const patternCount = (allTags || []).filter(t => typeof t === 'object' && _kindOf(t.label) === _kindOf(label)).length;
+        const nthTime = patternCount > 1 ? `这是第 ${patternCount} 次` : null;
 
         // ── Insights by trigger type ────────────────────────────
 
         if (label === '三重枪诈唬') {
             const chaseNote = handHasFlushSuit && hasFlushDraw
-                ? ` 可能是在用${flushCard}追同花 — 没中但继续开枪。`
-                : hasStraightDraw ? ' 很可能是顺子听牌没中。' : '';
-            const pattern = nthTime ? ` ${nthTime}连续三枪诈唬 — 强迫性诈唬者。4-bet或漂浮跟注，让他们自取灭亡。` : ' 注意他选择三枪诈唬的牌面结构。';
+                ? `可能是在用${flushCard}追同花——没中但继续开枪。`
+                : hasStraightDraw ? '很可能是顺子听牌没中。' : '';
+            const pattern = nthTime ? `${nthTime}连续三枪诈唬——强迫性诈唬者。4-bet或漂浮跟注，让他们自取灭亡。` : '注意他选择三枪诈唬的牌面结构。';
             return `三街连续下注但没有任何牌。${chaseNote}${pattern}`;
         }
 
         if (label === '诈唬到摊牌') {
             if (handHasFlushSuit && hasFlushDraw) {
-                const sizeNote = tag.extra?.includes('%') ? ` ${tag.extra} — ` : ' ';
+                const sizeNote = tag.extra?.includes('%') ? `${tag.extra}——` : '';
                 const quality  = highFlushCard ? '高同花牌，可以理解的半诈唬' : '低同花牌，不适合诈唬的位置';
-                return `${quality} — 在听同花牌面上用${flushCard}追牌。${sizeNote}没追上。经典追牌者。用下注赶走他们的听牌，他们跟注范围太宽。`;
+                return `${quality}——在听同花牌面上用${flushCard}追牌。${sizeNote}没追上。经典追牌者。用下注赶走他们的听牌，他们跟注范围太宽。`;
             }
-            if (hasStraightDraw) return `可能是顺子听牌没中。诈唬错了人。注意关联牌面 — 这个玩家在有胜率时就会下注，即使胜率很低。`;
-            return `Showed up with ${handName || 'air'} at showdown after betting. Pure bluff with no draw. Either tilting or just plays too many hands.${nthTime ? ` ${nthTime} doing this.` : ''}`;
+            if (hasStraightDraw) return `可能是顺子听牌没中。诈唬错了人。注意关联牌面——这个玩家在有胜率时就会下注，即使胜率很低。`;
+            return `下注后摊牌亮出${handName || '空气牌'}。没有任何听牌的纯诈唬。要么是上头，要么就是牌玩得太多。${nthTime ? `${nthTime}这么干。` : ''}`;
         }
 
-        if (label.startsWith('Overbet')) {
+        if (label.startsWith('Overbet') || label.endsWith('超池下注')) {
             if (outcome === 'lost') {
-                return `Overbet as a bluff — polarised sizing with nothing behind it. ${nthTime ? `${nthTime} overbetting and losing.` : 'If they overbet again, consider it a bluff-heavy line.'} Exploit: call down wide when they bomb.`;
+                return `超池下注诈唬——两极化尺度，后面什么都没有。${nthTime ? `${nthTime}超池下注并输掉。` : '如果他们再次超池，可以视为偏诈唬的线路。'}剥削方式：他们开炮时就宽范围跟到底。`;
             }
-            return `Overbet for value or to deny equity. Strong hand range when they overbet — don't hero-call here.${nthTime ? ` ${nthTime} going big.` : ''}`;
+            return `超池下注要么是拿价值，要么是拒绝胜率。他们超池时范围很强——别在这里英雄跟注。${nthTime ? `${nthTime}做大。` : ''}`;
         }
 
-        if (label.startsWith('Check-raised')) {
-            const street = label.replace('Check-raised ', '');
+        if (label.startsWith('Check-raised') || label.endsWith('过牌-加注')) {
+            const street = streetCn(label.replace(/^Check-raised /, '').replace(/ .*$/, ''));
             if (outcome === 'won') {
-                return `慢打陷阱 — 在${street}过牌${handName ? '持有' + handName : '持强牌'}然后加注。这位玩家过牌时需谨慎。他们愿意送免费牌来设陷阱。`;
+                return `慢打陷阱——在${street}过牌${handName ? '持有' + handName : '持强牌'}然后加注。这位玩家过牌时需谨慎。他们愿意送免费牌来设陷阱。`;
             }
-            return `Check-raised ${street} as a bluff — aggressive line, didn't have it. This player check-raises light. Their check is not always weakness.${nthTime ? ` ${nthTime} check-raising.` : ''}`;
+            return `${street}过牌-加注诈唬——激进线路，其实没牌。这个玩家会用弱牌过牌-加注。他们的过牌不总是示弱。${nthTime ? `${nthTime}过牌-加注。` : ''}`;
         }
 
         if (label === '3-bet 诈唬') {
-            const posNote = tag.extra ? ` ${tag.extra}` : '';
-            if (nthTime) return `${nthTime} 3-bet诈唬${posNote}。要么是连续诈唬者，要么是高估了边缘牌。考虑用轻4-bet — 他们会弃牌或翻牌后打得很差。`;
-            return `用空气牌3-bet${posNote}。可能是一次性的，也可能是模式。追踪频率 — 如果他们再做一次，就4-bet他们。`;
+            const posNote = tag.extra ? `（${tag.extra}）` : '';
+            if (nthTime) return `${nthTime}做出 3-bet 诈唬${posNote}。要么是连续诈唬者，要么是高估了边缘牌。考虑用轻 4-bet——他们会弃牌或翻牌后打得很差。`;
+            return `用空气牌 3-bet${posNote}。可能是一次性的，也可能是模式。追踪频率——如果他们再做一次，就 4-bet 他们。`;
         }
 
         if (label === '用弱牌跟注大筹码') {
             if (handHasFlushSuit && hasFlushDraw) {
-                return `用${flushCard}追同花${highFlushCard ? ' — 高牌，底池赔率可能看起来还行' : ' — 低牌，赔率很差'}。投入了${tag.extra || '大量筹码'}然后没中。教科书式追牌者。用下注赶走他们的听牌 — 他们不会弃牌但经常不中。`;
+                return `用${flushCard}追同花${highFlushCard ? '——高牌，底池赔率可能看起来还行' : '——低牌，赔率很差'}。投入了${tag.extra || '大量筹码'}，然后没中。教科书式追牌者。用下注赶走他们的听牌——他们不会弃牌但经常不中。`;
             }
-            if (hasStraightDraw) return `用顺子听牌跟注大注。${tag.extra || '大量'}筹码冒险追牌。可被利用 — 在听牌多的牌面上强硬拒绝胜率。`;
-            return `用${handName || '弱牌'}投入${tag.extra || '大额'}筹码 — 没有听牌，纯粹是糟糕的跟注。站台式倾向。无情地价值下注，不要诈唬。`;
+            if (hasStraightDraw) return `用顺子听牌跟注大注——把${tag.extra || '大量筹码'}押在听牌上冒险。可被利用——在听牌多的牌面上强硬拒绝胜率。`;
+            return `用${handName || '弱牌'}投入${tag.extra || '大额筹码'}——没有听牌，纯粹是糟糕的跟注。站台式倾向。无情地价值下注，不要诈唬。`;
         }
 
         if (label === '翻前平跟反加') {
-            if (hand.length) return `用${handName || '一手牌'}溜入-再加注 — 经典的超强牌陷阱（AA/KK）。当这位玩家溜入并反加时，给予最大尊重。除非你有坚果，否则弃牌。`;
-            return `Limp-reraise spotted — likely premium hand trap (AA/KK/QQ). Could also be a squeeze play.${nthTime ? ` ${nthTime} doing this.` : ''} Fold or 4-bet bluff only with blockers.`;
+            if (hand.length) return `用${handName || '一手牌'}溜入-再加注——经典的超强牌陷阱（AA/KK）。当这位玩家溜入并反加时，给予最大尊重。除非你有坚果，否则弃牌。`;
+            return `发现溜入-再加注——很可能是超强牌陷阱（AA/KK/QQ）。也可能是挤压打法。${nthTime ? `${nthTime}这么干。` : ''}只用阻断牌做 4-bet 诈唬，否则弃牌。`;
         }
 
         if (label === '翻牌反主动下注打翻前攻击者') {
-            if (outcome === 'won') return `向翻牌前攻击者反主动下注并拿下底池。要么是非常强，要么是找到了PFA无法防守的场合。注意他们是否重复此行为 — 可能是位置剥削或只是运气好。`;
-            return `向翻牌前攻击者反主动下注并输掉。不尊重位置。容易被利用 — 加注他们的反主动下注，他们会弃牌或打错。`;
+            if (outcome === 'won') return `向翻牌前攻击者反主动下注并拿下底池。要么是非常强，要么是找到了PFA无法防守的场合。注意他们是否重复此行为——可能是位置剥削或只是运气好。`;
+            return `向翻牌前攻击者反主动下注并输掉。不尊重位置。容易被利用——加注他们的反主动下注，他们会弃牌或打错。`;
         }
 
-        if (label.startsWith('Slowplayed')) {
-            const checkedStreet = label.includes('flop') ? 'flop' : 'turn';
-            return `Passive on the ${checkedStreet} with ${handName} — trapping or playing for deception. Don't give free cards to this player on coordinated boards. Their check is not always weakness.${nthTime ? ` ${nthTime} slowplaying.` : ''}`;
+        if (label.startsWith('Slowplayed') || label.startsWith('慢打')) {
+            const checkedStreet = streetCn(/flop|翻牌/.test(label) ? 'flop' : 'turn');
+            return `在${checkedStreet}用${handName || '强牌'}被动过牌——在设陷阱或演牌。在关联牌面上别给这个玩家免费牌。他们的过牌不总是示弱。${nthTime ? `${nthTime}慢打。` : ''}`;
         }
 
         return null;
@@ -17892,7 +17892,7 @@
         const displayName = s?.displayName || name;
 
         const tagsHtml = tags.length === 0
-            ? '<div class="tphud-dim" style="padding:12px 0">No notable plays tagged yet.</div>'
+            ? '<div class="tphud-dim" style="padding:12px 0">还没有标记出显著玩法。</div>'
             : tags.map(t => renderAutoTagEntry(t, tags)).join('');
 
         const hasLegacy = tags.some(t => typeof t === 'string');
@@ -17900,13 +17900,13 @@
         modal.innerHTML = `
             <div class="tphud-help-box tphud-autotags-box">
                 <div class="tphud-help-header">
-                    <span class="tphud-help-title">Notable 入池率 — ${escHtml(displayName)}</span>
+                    <span class="tphud-help-title">显著玩法——${escHtml(displayName)}</span>
                     <div style="display:flex;gap:6px;align-items:center">
-                        ${tags.length > 0 ? '<button class="tphud-at-clear" style="font-size:10px;color:#e74c3c;background:none;border:1px solid #e74c3c;border-radius:3px;padding:1px 6px;cursor:pointer">Clear all</button>' : ''}
+                        ${tags.length > 0 ? '<button class="tphud-at-clear" style="font-size:10px;color:#e74c3c;background:none;border:1px solid #e74c3c;border-radius:3px;padding:1px 6px;cursor:pointer">全部清除</button>' : ''}
                         <button class="tphud-help-close">&times;</button>
                     </div>
                 </div>
-                ${hasLegacy ? '<div class="tphud-dim" style="padding:6px 14px;font-size:10px;border-bottom:1px solid #222">Some entries are from an older format — clear and play through showdowns to see full card detail.</div>' : ''}
+                ${hasLegacy ? '<div class="tphud-dim" style="padding:6px 14px;font-size:10px;border-bottom:1px solid #222">部分条目来自旧格式——清除后重新打到摊牌，即可看到完整的牌型细节。</div>' : ''}
                 <div class="tphud-help-content tphud-autotags-content">
                     ${tagsHtml}
                 </div>
