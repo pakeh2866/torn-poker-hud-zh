@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.13.4
+// @version      6.13.5
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -1738,7 +1738,7 @@
                 if (ownership.ownership === 'board_assisted') {
                     return {
                         verdict:  'THIN_VALUE',
-                        reason:   `${streetSummary}——高估了手牌，有真实但有限的权益${ownNote}${overbetNote}${posCtx}`,
+                        reason:   `${streetSummary}——高估了手牌，有真实但有限的胜率${ownNote}${overbetNote}${posCtx}`,
                         handRank: rank,
                     };
                 }
@@ -6284,7 +6284,7 @@
                         `河牌上，激进玩家的过牌要么是空气要么是陷阱。只有有好牌时才下注——别把抓诈唬牌变成诈唬。`
                     );
                     else                 push(
-                        `很可能没中牌面。你有主动权——只要有点牌或权益就下注。`,
+                        `很可能没中牌面。你有主动权——只要有点牌或胜率就下注。`,
                         `很可能没中牌面。你有主动权——只要有东西就下注。`
                     );
                     decision = 'context_dependent';
@@ -8637,7 +8637,7 @@
         const m = text.match(/(?:Bet|下注)\s*(\d+)\s*[–\-—~]\s*(\d+)\s*%/);
         if (!m || bracket === 'behind' || bracket === 'fold_territory' || bracket === 'strong') return text;
         const note = bracket === 'dominant'
-            ? _voice(` 往上限 ${m[2]}% 靠——权益支持这么做。`, ` 往 ${m[2]}% 那个上限靠，孩子——数字撑得住。`)
+            ? _voice(` 往上限 ${m[2]}% 靠——胜率支持这么做。`, ` 往 ${m[2]}% 那个上限靠，孩子——数字撑得住。`)
             : _voice(` 暂时先往 ${m[1]}% 那端靠。`, ` 暂时先往 ${m[1]}% 那端靠，伙计。`);
         // _applyWinContextCore's own fallback strips the message's trailing period to make room for
         // a bare "(NN%)" — insert the lean note before that paren instead of after it (so the equity
@@ -8695,7 +8695,7 @@
         const _isDuke = hudSettings.coachPersonality === 'duke';
         const poVerdict = (!isPreflop && potOdds != null)
             ? (win > potOdds
-                ? (_isDuke ? ` 需要 ${potOdds}% 才能跟注——数学站在你这边，孩子。`   : ` 需要 ${potOdds}% 才能跟注——权益站在你这边。`)
+                ? (_isDuke ? ` 需要 ${potOdds}% 才能跟注——数学站在你这边，孩子。`   : ` 需要 ${potOdds}% 才能跟注——胜率站在你这边。`)
                 : (_isDuke ? ` 需要 ${potOdds}% 才能跟注——赔率不划算，伙计。`       : ` 需要 ${potOdds}% 才能跟注——赔率对你不利。`))
             : '';
 
@@ -8749,12 +8749,12 @@
                 ]);
             return _isDuke
                 ? _pick([
-                    `${noun}——但权益只有 ${winWord}${oppStr}。保持底池小。面对加注就弃牌。`,
+                    `${noun}——但胜率只有 ${winWord}${oppStr}。保持底池小。面对加注就弃牌。`,
                     `${noun} 在 ${winWord}${oppStr}。看起来比实际强，孩子——别造这个池。`,
                     `${noun}——${winWord}${oppStr}。那是扔硬币不是价值牌。保持低成本。`,
                 ])
                 : _pick([
-                    `${noun}——但权益只有 ${winWord}${oppStr}。保持底池小。面对加注就弃牌。`,
+                    `${noun}——但胜率只有 ${winWord}${oppStr}。保持底池小。面对加注就弃牌。`,
                     `${noun} 在 ${winWord}${oppStr}。看起来比实际强——别造这个池。`,
                     `${noun}——${winWord}${oppStr}。更像是扔硬币而不是价值牌。保持低成本。`,
                 ]);
@@ -8771,7 +8771,7 @@
                 ])
                 : _pick([
                     `${cleaned}——虽然你 ${winWord}${oppStr}。比看起来舒服。`,
-                    `${cleaned}——但权益说你 ${winWord}${oppStr}。你在这里比牌面暗示的更有空间。`,
+                    `${cleaned}——但胜率说你 ${winWord}${oppStr}。你在这里比牌面暗示的更有空间。`,
                     `${cleaned}。值得注意：你 ${winWord}${oppStr}。没有感觉的那么紧张。`,
                 ]);
         }
@@ -8787,17 +8787,17 @@
                 : _pick([
                     `${noun}——勉强 ${pct}${oppStr}。${poVerdict}这手牌在这里没有价值。弃牌。`,
                     `${noun} 在 ${pct}${oppStr}。${poVerdict}在这里不能玩。放手吧。`,
-                    `${noun}——${pct}${oppStr}。${poVerdict}权益证实了。走人。`,
+                    `${noun}——${pct}${oppStr}。${poVerdict}胜率证实了。走人。`,
                 ]);
             return _isDuke
                 ? _pick([
                     `${noun}——只有 ${winWord}${oppStr}。保持极小，面对任何真火力就弃牌。`,
-                    `${noun} 在 ${winWord}${oppStr}。权益不在那里——别跟注任何大注，孩子。`,
+                    `${noun} 在 ${winWord}${oppStr}。胜率不在那里——别跟注任何大注，孩子。`,
                     `${noun}——${winWord}${oppStr}。边缘牌在边缘场合。最小投入或走人，孩子。`,
                 ])
                 : _pick([
                     `${noun}——只有 ${winWord}${oppStr}。保持底池非常小。面对任何真下注就弃牌。`,
-                    `${noun} 在 ${winWord}${oppStr}。权益不在那里——别跟注任何实质性下注。`,
+                    `${noun} 在 ${winWord}${oppStr}。胜率不在那里——别跟注任何实质性下注。`,
                     `${noun}——${winWord}${oppStr}。边缘牌在边缘场合。仅最小投入。`,
                 ]);
         }
@@ -8812,7 +8812,7 @@
             : _pick([
                 `${baseText.replace(/.$/, '')}——勉强 ${pct}${oppStr}。走开。`,
                 `${baseText.replace(/.$/, '')}——${pct}${oppStr}。不值得再多一个筹码。`,
-                `${baseText.replace(/.$/, '')}——权益在 ${pct}${oppStr} 证实了。走。`,
+                `${baseText.replace(/.$/, '')}——胜率在 ${pct}${oppStr} 证实了。走。`,
             ]);
 
         // PREFLOP MULTI-WAY: field dilution is the story, not hand strength
@@ -8884,20 +8884,20 @@
             if (bracket === 'competitive' || bracket === 'strong') return facingBet
                 ? (_isDuke
                     ? _pick([
-                        `高张面对下注——你 ${winWord}${oppStr}。${poVerdict || '如果价格合理，权益支持跟注。'}没有成牌就不要膨胀这个底池。`,
+                        `高张面对下注——你 ${winWord}${oppStr}。${poVerdict || '如果价格合理，胜率支持跟注。'}没有成牌就不要膨胀这个底池。`,
                         `高张而且 ${winWord}${oppStr}。${poVerdict || "你可以跟注合理下注，孩子——别让他们便宜地把你定价出局。"}`,
                     ])
                     : _pick([
-                        `高张面对下注——你 ${winWord}${oppStr}。${poVerdict || '如果价格合理，权益支持跟注。'}没有成牌就不要膨胀底池。`,
+                        `高张面对下注——你 ${winWord}${oppStr}。${poVerdict || '如果价格合理，胜率支持跟注。'}没有成牌就不要膨胀底池。`,
                         `高张而且 ${winWord}${oppStr}。${poVerdict || "你可以跟注合理下注——别让他们便宜地把你定价出局。"}`,
                     ]))
                 : (_isDuke
                     ? _pick([
-                        `高张有真实权益——${winWord}${oppStr}。值得一个便宜街。别跟大注，但你活着。`,
+                        `高张有真实胜率——${winWord}${oppStr}。值得一个便宜街。别跟大注，但你活着。`,
                         `高张在 ${winWord}${oppStr}。你真的在场，伙计。便宜拿下，看看这街带来什么。`,
                     ])
                     : _pick([
-                        `高张有真实权益——${winWord}${oppStr}。值得一个便宜街。别跟大注，但你活着。`,
+                        `高张有真实胜率——${winWord}${oppStr}。值得一个便宜街。别跟大注，但你活着。`,
                         `高张在 ${winWord}${oppStr}。你真的在场。便宜拿下，看看后面如何。`,
                     ]));
             return _isDuke
@@ -11896,7 +11896,7 @@
                     if (onRiver) {
                         reason = `你有顶对${comboNote}并在河牌下注——对手弃牌。他们便宜逃跑了。`;
                     } else if (isWet) {
-                        reason = `你在听牌多的牌面上有顶对${comboNote}${boardCtx}——对手弃牌。保护性下注有效，权益被拒绝。`;
+                        reason = `你在听牌多的牌面上有顶对${comboNote}${boardCtx}——对手弃牌。保护性下注有效，胜率被拒绝。`;
                     } else {
                         reason = `你有顶对${comboNote}并下注——对手弃牌。他们便宜逃跑了。`;
                     }
