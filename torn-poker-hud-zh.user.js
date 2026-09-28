@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Poker HUD 玩家画像与教练（中文汉化版）
 // @namespace    https://github.com/pakeh2866/torn-poker-hud-zh
-// @version      6.13.3
+// @version      6.13.4
 // @description  德扑对手自动分析与实战指导。追踪 VPIP、PFR、AFq、WTSD 等指标，每个座位显示徽章，提供针对性剥削建议与自我改进路径。中文汉化版，译自 HopesG 的原作（MIT 许可）。仅翻译文案，未增删任何功能、未收集任何数据。请勿与原版同时启用。
 // @description:en  Automatic poker player profiling and in-game coaching. Tracks VPIP, PFR, AFq, WTSD and more. Badges on every seat, exploit hints for opponents, improvement path for yourself. Chinese translation of the original work by HopesG (MIT). Translation only - no features added or removed, no data collected. Do not run alongside the original script.
 // @author       HopesG
@@ -2400,7 +2400,7 @@
             if ((d.bets   || 0) > 0) parts.push(`bet ${street}`);
             if ((d.raises || 0) > 0) parts.push(`raised ${street}`);
         }
-        if (p.raisedPreflop && !parts.some(x => x.includes('preflop'))) parts.unshift('翻牌前加注');
+        if (p.raisedPreflop && !parts.some(x => x.includes('preflop'))) parts.unshift('raised preflop');
         return parts.join(', ');
     }
     const STREET_CN = { preflop: '翻前', flop: '翻牌', turn: '转牌', river: '河牌' }; const streetCn = s => STREET_CN[s] || s;
@@ -3735,8 +3735,8 @@
 
         let preflopAction;
         if (p.raisedPreflop)
-            preflopAction = p.preflopRaiseAmt ? `Raised $${p.preflopRaiseAmt.toLocaleString()} preflop`
-                : p.preflopRaiseAmtBB ? `Raised ${p.preflopRaiseAmtBB} BB preflop` : 'Raised preflop';
+            preflopAction = p.preflopRaiseAmt ? `加注 $${p.preflopRaiseAmt.toLocaleString()} 翻前`
+                : p.preflopRaiseAmtBB ? `加注 ${p.preflopRaiseAmtBB} BB 翻前` : '加注翻前';
         else if (p.voluntaryPreflop)
             preflopAction = '翻前跟注';
         else if (p.postedBB && !p.foldedPreflop)
@@ -13245,7 +13245,7 @@
 
     function computeTiltTrigger(s) {
         const hist = [...(s.history || [])].filter(e => e.ts).sort((a, b) => a.ts - b.ts);
-        const isVoluntary = e => /raised|called preflop/i.test(e.preflopAction || '');
+        const isVoluntary = e => /raised|called preflop|加注|跟注/i.test(e.preflopAction || '');
         const isBigLoss = e => e.outcome?.type !== 'win' && e.potSize && e.bbAmount && (e.potSize / e.bbAmount) >= TILT_BIG_LOSS_BB;
 
         let afterLossVoluntary = 0, afterLossTotal = 0;
@@ -16237,7 +16237,7 @@
             return `
                 <div class="tphud-hentry${e.pinned ? ' tphud-hentry-pinned' : ''}">
                     <div class="tphud-htop">
-                        <span class="tphud-haction">${e.preflopAction}</span>
+                        <span class="tphud-haction">${({ 'Raised preflop': '加注翻前', 'Called preflop': '翻前跟注', 'Checked option (big blind)': '过牌（大盲）', 'Small blind — stayed in': '小盲——留在池中', 'Folded preflop': '翻前弃牌', 'Was in hand': '参与了这手牌' }[e.preflopAction] || String(e.preflopAction || '').replace(/^Raised \$([\d,]+) preflop$/, '加注 $$$1 翻前').replace(/^Raised ([\d.]+) BB preflop$/, '加注 $1 BB 翻前'))}</span>
                         <span class="tphud-htop-right">
                             ${dateLabel ? `<span style="color:#555;font-size:9px">${dateLabel}</span>` : ''}
                             <button class="tphud-hist-pin${e.pinned ? ' tphud-hist-pin-active' : ''}" data-handid="${escHtml(e.handId ?? '')}" title="${e.pinned ? 'Unpin — this hand can be evicted from history again' : 'Pin — always keep this hand in history'}">📌</button>
@@ -17848,7 +17848,7 @@
         const metaParts = [];
         if (t.outcome) metaParts.push(`<span style="color:${outcomeColor}">${escHtml(t.outcome)}</span>`);
         if (t.extra)   metaParts.push(`<span>${escHtml(t.extra)}</span>`);
-        if (t.line)    metaParts.push(`<span class="tphud-dim">${escHtml(t.line)}</span>`);
+        if (t.line)    metaParts.push(`<span class="tphud-dim">${escHtml(String(t.line).replace(/翻牌前加注/g, '翻前加注').replace(/\b(bet|raised) (preflop|flop|turn|river)\b/g, (m, v, st) => STREET_CN[st] + (v === 'bet' ? '下注' : '加注')).replace(/,\s*/g, '，'))}</span>`);
         if (t.date)    metaParts.push(`<span class="tphud-dim">${escHtml(t.date)}</span>`);
 
         const handSection = t.handCards ? `
@@ -21871,8 +21871,8 @@
         const callBB = e.preflopCallAmt && e.bbAmount ? e.preflopCallAmt / e.bbAmount
                      : e.preflopCallAmtBB != null ? e.preflopCallAmtBB : null;
         if (callBB != null) return callBB <= 1.05 ? 'limped' : 'called';
-        if (/^Checked option/.test(e.preflopAction || '')) return 'checked';
-        if (/^Folded/.test(e.preflopAction || ''))         return 'folded';
+        if (/^(?:Checked option|过牌)/.test(e.preflopAction || '')) return 'checked';
+        if (/^(?:Folded|翻前弃牌)/.test(e.preflopAction || ''))         return 'folded';
         return null;
     }
 
